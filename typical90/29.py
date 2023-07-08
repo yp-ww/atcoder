@@ -53,8 +53,8 @@ def eval(a, b, n):
     if lazy[n] == 0:
         return 
     
-    # 最下段の場合、値を反映
     node[n] = max(node[n], lazy[n]) # 区間最大値
+    # 最下段の場合、処理を抜ける
     if b - a <= 1:
         return 
     
