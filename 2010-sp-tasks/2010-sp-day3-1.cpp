@@ -45,10 +45,6 @@ int main()
         cnt++;
     }
     cout << ans << endl;
-
-
-
-
-
+    
     return 0;
 }
