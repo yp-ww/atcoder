@@ -21,5 +21,7 @@ const ll INF = (ll)1e15;
 
 int main()
 {
+    adjacent_difference
+    getloadavg
     return 0;
 }
