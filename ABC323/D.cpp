@@ -30,25 +30,19 @@ int main()
     rep(i,0,n){
         mp[s[i]] = c[i];
     }
-    set<ll> st;
-    priority_queue<ll> hq;
-    rep(i,0,n){
-        hq.push(-s[i]);
-        st.insert(s[i]);
-    }
+    
     ll ans = 0;
-    while(!hq.empty()){
-        ll now = -hq.top(); hq.pop();
-        ll val = mp[now];
-        if (val<=1){ ans++; continue;}
+    auto itr = mp.begin();
+    while(itr!=mp.end()){
+        auto [now,val] = *itr;
+        if (val<=1){ ans++; itr++; continue;}
         if (val%2){
             ans++;
             mp[now*2]+=(val-1)/2;
         }else{
             mp[now*2]+=(val)/2;
         }
-        if (st.find(now*2) != st.end())continue;
-        hq.push(-now*2);
+        itr++;
     }
     cout << ans << endl;
     return 0;

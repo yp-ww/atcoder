@@ -38,16 +38,10 @@ int main()
         now[i] += i+1;
         chmax(ma, now[i]);
     }
-    bool flag = false;
-    int cnt = 0;
-    rep(i,0,n){
-        if (now[i]==ma)cnt++;
-    }
-    if (cnt>1) flag = true;
 
     vector<int>ans(n,0);
     rep(i,0,n){
-        if (ma == now[i] && !flag){
+        if (ma == now[i]){
             ans[i] = 0;
             continue;
         }
