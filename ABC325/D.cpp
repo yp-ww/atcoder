@@ -15,31 +15,38 @@ template<typename T> inline bool chmax(T &a, T b) { return ((a < b) ? (a = b, tr
 template<typename T> inline bool chmin(T &a, T b) { return ((a > b) ? (a = b, true) : (false)); }
 
 const double pi = 3.141592653589793;
-const ll INF = (ll)1e15;
+const ll INF = (ll)3e18;
+
+using P = pair<ll,ll>;
 
 int main()
 {
     ll n;
     cin>>n;
-    vector<ll>w(n),x(n);
-    rep(i,0,n)cin>>w[i]>>x[i];
-    // vector<ll>cnt(24);
-    // rep(i,0,n){
-    //     rep(j,0,9){
-    //         cnt[(9+x[i]+j)%24] += w[i];
-    //     }
-    // }
-    // ll ans = *max_element(all(cnt));
-    ll ans = 0;
-    rep(t,0,24){
-        ll cnt = 0;
-        rep(i,0,n){
-            ll nt = (t + x[i])%24;
-            if (9<=nt&&nt<18) cnt+=w[i]; 
-        }
-        chmax(ans,cnt);
-    }
     
+    vector<P> arr;
+    rep(i,0,n){
+        ll t,d;
+        cin>>t>>d;
+        arr.push_back({t, t+d});
+    }
+    sort(all(arr));
+    arr.push_back({INF+7,INF+7});
+    priority_queue<ll,vector<ll>,greater<ll>> hq;
+    ll now = 0;
+    ll ans = 0;
+    rep(i,0,n){
+        now = arr[i].first;
+        hq.push(arr[i].second);
+        while (!hq.empty() && now < arr[i+1].first){
+            ll t = hq.top(); hq.pop();
+            if (now <= t){
+                now++;
+                ans++;
+            }
+        }
+    }
+
     cout << ans << endl;
     return 0;
 }
