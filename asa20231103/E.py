@@ -1,25 +1,5 @@
-import io
-import sys
-_INPUT = """\
-5
-1 2 3 4 5
-1 2 2 4 3
-7
-1 1
-2 2
-2 3
-3 3
-4 4
-4 5
-5 5
-
-"""
-sys.stdin = io.StringIO(_INPUT)
-
-# Anser
 import sys
 sys.setrecursionlimit(10**5)
-input=lambda :sys.stdin.readline()[:-1]
 
 n = int(input())
 a = list(map(int,input().split()))
