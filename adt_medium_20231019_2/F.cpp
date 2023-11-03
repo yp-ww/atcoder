@@ -28,7 +28,7 @@ int main()
         u--;v--;
         uf.merge(u,v);
     }
-    auto ans = uf.groups();
-    cout << ans.size() << endl;
+    ll ans = uf.groups().size();
+    cout << ans << endl;
     return 0;
 }
