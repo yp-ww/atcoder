@@ -21,29 +21,8 @@ int main()
 {
     ll n;
     cin>>n;
-    ll x,y;
-    cin>>x>>y;
-    vector<vector<vector<ll>>> dp(310,vector<vector<ll>>(310, vector<ll>(310,INF)));
-    dp[0][0][0] = 0;
-
-    rep(i,0,n){
-        ll a,b;
-        cin>>a>>b;
-        rep(j,0,301)rep(k,0,301){
-            if (dp[i][j][k]==INF)continue;
-            chmin(dp[i+1][j][k], dp[i][j][k]);
-            chmin(dp[i+1][min((ll)300,j+a)][min((ll)300,k+b)], dp[i][j][k]+1);
-        }
-    }
-    ll ans = INF;
-    rep(j,x,301)rep(k,y,301){
-        chmin(ans, dp[n][j][k]);
-    }
-    if (ans==INF){
-        cout << -1 << endl;
-    }else{
-        cout << ans << endl;
-    }
-
+    string s;
+    cin>>s;
+    YesNo(s.find("ab")!=string::npos || s.find("ba")!=string::npos);
     return 0;
 }

@@ -17,33 +17,29 @@ template<typename T> inline bool chmin(T &a, T b) { return ((a > b) ? (a = b, tr
 const double pi = 3.141592653589793;
 const ll INF = numeric_limits<ll>::max();
 
+double dp[5100][5100];
+
 int main()
 {
     ll n;
     cin>>n;
-    ll x,y;
-    cin>>x>>y;
-    vector<vector<vector<ll>>> dp(310,vector<vector<ll>>(310, vector<ll>(310,INF)));
-    dp[0][0][0] = 0;
-
-    rep(i,0,n){
-        ll a,b;
-        cin>>a>>b;
-        rep(j,0,301)rep(k,0,301){
-            if (dp[i][j][k]==INF)continue;
-            chmin(dp[i+1][j][k], dp[i][j][k]);
-            chmin(dp[i+1][min((ll)300,j+a)][min((ll)300,k+b)], dp[i][j][k]+1);
-        }
+    vector<ll>p(n);
+    rep(i,0,n)cin>>p[i];
+    double inf = -100000000000.0;
+    rep(i,0,5100)rep(j,0,5100)dp[i][j] = inf;
+    dp[0][0] = 0;
+    rep(i,0,n)rep(j,0,n){
+        if (dp[i][j] == inf)continue;
+        chmax(dp[i+1][j], dp[i][j]);
+        chmax(dp[i+1][j+1], dp[i][j]*0.9 + p[i]);
     }
-    ll ans = INF;
-    rep(j,x,301)rep(k,y,301){
-        chmin(ans, dp[n][j][k]);
+    double ans = inf;
+    rep(j,1,n+1){
+        double ch = 0.0;
+        rep(k,0,j) ch += pow(0.9,k);
+        chmax(ans, dp[n][j]/ch - 1200.0/sqrt(j));
     }
-    if (ans==INF){
-        cout << -1 << endl;
-    }else{
-        cout << ans << endl;
-    }
-
+    cout << fixed << setprecision(15) << ans << endl;
+    
     return 0;
 }
