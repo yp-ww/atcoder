@@ -17,8 +17,6 @@ template<typename T> inline bool chmin(T &a, T b) { return ((a > b) ? (a = b, tr
 const double pi = 3.141592653589793;
 const ll INF = numeric_limits<ll>::max();
 
-ll dp[310][310][310] = {INF};
-
 int main()
 {
     ll n;
@@ -46,7 +44,6 @@ int main()
     }else{
         cout << ans << endl;
     }
-    
 
     return 0;
 }
