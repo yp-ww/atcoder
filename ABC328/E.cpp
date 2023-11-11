@@ -17,41 +17,58 @@ template<typename T> inline bool chmin(T &a, T b) { return ((a > b) ? (a = b, tr
 const double pi = 3.141592653589793;
 const ll INF = (ll)1e18+10;
 
+template <typename T> bool next_combination(const T first, const T last, int k) {
+    const T subset = first + k;
+    // empty container | k = 0 | k == n 
+    if (first == last || first == subset || last == subset) {
+        return false;
+    }
+    T src = subset;
+    while (first != src) {
+        src--;
+        if (*src < *(last - 1)) {
+            T dest = subset;
+            while (*src >= *dest) {
+                dest++;
+            }
+            iter_swap(src, dest);
+            rotate(src + 1, dest + 1, last);
+            rotate(subset, subset + (last - dest) - 1, last);
+            return true;
+        }
+    }
+    // restore
+    rotate(first, subset, last);
+    return false;
+}
+
 int main()
 {
     ll n,m,k;
     cin>>n>>m>>k;
-    vector<vector<pair<ll,ll>>>g(n);
+    vector<tuple<ll,ll,ll>> tp;
     rep(i,0,m){
         ll u,v,w;
         cin>>u>>v>>w;
         u--;v--;
-        g[u].push_back({v,w});
-        g[v].push_back({u,w});
+        tp.push_back({u,v,w});
     }
-
-    queue<pair<ll,ll>> q;
-    q.push({1,0LL});
+    vector<ll>arr;
+    rep(i,0,m)arr.push_back(i);
     ll ans = k;
-    while (!q.empty()){
-        auto [s,cost] = q.front(); q.pop();
-        if (s+1 == (1LL<<n)){
-            chmin(ans, cost%k);
-            continue;
+    do{
+        dsu uf(n);
+        ll temp = 0LL;
+        rep(i,0,n-1){
+            auto [u,v,w] = tp[arr[i]];
+            if (uf.same(u,v))break;
+            uf.merge(u,v);
+            temp += w;
+            temp %= k;
         }
-        rep(i,0,n){
-            if (s&(1LL<<i)){
-                ll now = i;
-                for (auto [nex,w]: g[now]){
-                    if (s&(1LL<<nex))continue;
-                    ll snex = s;
-                    snex |= 1LL<<now;
-                    snex |= 1LL<<nex;
-                    q.push({snex, (cost+w)%k});
-                }
-            }
-        }
-    }
+        if (uf.size(0)==n) chmin(ans,temp);
+    }while(next_combination(all(arr), n-1));
+    
     cout << ans << endl;
     return 0;
 }
