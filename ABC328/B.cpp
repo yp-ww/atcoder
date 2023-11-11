@@ -25,24 +25,13 @@ int main()
     rep(i,0,n)cin>>d[i];
     ll ans = 0;
     rep(i,1,n+1){
-        if (i>=10){
-            if ((i/10)!=i%10) continue;
-        }
-        ll zz = i*10+i;
-        ll z = i/10;
         rep(j,1,d[i-1]+1){
-            if (j == i){
-                ans++;
-                // cout << i << " " << j << endl;
-            }
-            if (j == z){
-                ans++;
-                // cout << i << " " << z << endl;
-            }
-            if (j == zz){
-                ans++;
-                // cout << i << " " << zz << endl;
-            }
+            set<ll> st;
+            st.insert(i%10);
+            if (i/10) st.insert(i/10);
+            st.insert(j%10);
+            if (j/10) st.insert(j/10);            
+            if (st.size()==1)ans++;
         }
     }
     cout << ans << endl;
