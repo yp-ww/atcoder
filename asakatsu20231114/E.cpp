@@ -53,8 +53,7 @@ int main()
     function<void(ll,ll)> dfs2 = [&](ll now, ll pre){
         v[now] = true;
         if (pre!=-1){
-            dp[now] = dp[pre] + cnt[pre] - cnt[now]*2;
-            cnt[now] = cnt[pre];
+            dp[now] = dp[pre] + n - cnt[now]*2;
         }
         for (auto nex: g[now]){
             if (v[nex]) continue;
