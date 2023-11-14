@@ -22,34 +22,26 @@ int main()
     ll n,m;
     cin>>n>>m;
     vector<ll>p(n),c(n);
-    vector<vector<ll>>f(n);
+    vector<bitset<200>>f(n);
     rep(i,0,n){
         cin>>p[i]>>c[i];
         rep(j,0,c[i]){
             ll ff;
             cin>>ff;
             ff--;
-            f[i].push_back(ff);
+            f[i].set(ff);
         }
     }
     bool flag = false;
     rep(i,0,n){
-        vector<bool>f1(m);
-        for (auto x: f[i]){
-            f1[x] = true;
-        }
+        auto f1 = f[i];
         rep(j,0,n){
             if (i==j)continue;
             if (p[i]<p[j])continue;
-            auto f2 = f1;
-            for (auto x: f[j]){
-                f2[x] = false;
-            }
-            bool flag2 = false;
-            rep(k,0,m) flag2 |= f2[k];
-            if (flag2)continue;
-            if (p[i]>p[j]) flag = true;
-            if (f[i].size()<f[j].size()) flag =true;
+            auto f2 = f[j];
+            if ((f1&f2)!=f1)continue;
+            if (p[i]>p[j])flag = true;
+            if (f1.count()<f2.count())flag = true;
         }
     }
     YesNo(flag);
