@@ -23,11 +23,13 @@ int main()
     cin>>n>>a>>b;
     ll ra = (n/a) * a;
     ll rb = (n/b) * b;
-    ll rab = (n/(a*b)) * a*b;
+    ll ab = lcm(a,b);
+    ll rab = (n/ab) * ab;
     ll ans = n*(1+n)/2;
     ans -= (n/a)*(a+ra)/2;
     ans -= (n/b)*(b+rb)/2;
-    ans += (n/(a*b))*(a*b+rab)/2;
+    ans += (n/ab)*(ab+rab)/2;
     cout << ans << endl;
+
     return 0;
 }
