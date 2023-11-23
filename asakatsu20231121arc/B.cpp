@@ -22,6 +22,17 @@ int main()
     ll l,r;
     cin>>l>>r;
     ll ans = 0;
-    
+    ll d = r-l;
+    rrep(i,d,0){
+        rep(j,l,r){
+            ll a = j;
+            ll b = j+i;
+            if (b>r) break;
+            if (gcd(a,b)==1){
+                cout << i << endl;
+                return 0;
+            }
+        }
+    }
     return 0;
 }
