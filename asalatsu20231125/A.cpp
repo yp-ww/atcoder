@@ -21,12 +21,8 @@ int main()
 {
     vector<ll>a(10);
     rep(i,0,10)cin>>a[i];
-    map<ll,ll>mp;
-    rep(i,0,10)mp[i] = a[i];
     ll now = 0;
-    now = mp[now];
-    now = mp[now];
-    now = mp[now];
+    rep(i,0,3)now = a[now];
     cout << now << endl;
     return 0;
 }
