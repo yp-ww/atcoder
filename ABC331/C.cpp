@@ -15,41 +15,25 @@ template<typename T> inline bool chmax(T &a, T b) { return ((a < b) ? (a = b, tr
 template<typename T> inline bool chmin(T &a, T b) { return ((a > b) ? (a = b, true) : (false)); }
 
 const double pi = 3.141592653589793;
-const ll INF = (ll)1e15;
+const ll INF = (ll)1e18+10;
 
-template<typename T>
-struct Cum{
-    vector<T> cum;
-    // コンストラクタ
-    Cum(vector<ll>& arr){
-        int n = arr.size();
-        cum.resize(n+1,0);
-        // 累積和を計算
-        for (int i=0; i<n; i++){
-            cum[i+1] = cum[i] + arr[i];
-        }
-    }
-    // 区間 [l,r) の和を取得
-    T get(int l, int r){
-        assert(l<=r);
-        return cum[r] - cum[l];
-    }
-};
+ll op(ll a, ll b){ return a+b; }
+ll e(){ return 0LL; }
 
 int main()
 {
-    ll n,q;
-    cin>>n>>q;
+    ll n;
+    cin>>n;
     vector<ll>a(n);
     rep(i,0,n)cin>>a[i];
-    
-    Cum<ll> cum(a);
-    while (q){
-        q--;
-        ll l,r;
-        cin>>l>>r;
-        l--;
-        cout << cum.get(l,r) << endl;
+
+    segtree<ll,op,e> seg(2000100);
+    rep(i,0,n){
+        seg.set(a[i], seg.get(a[i])+a[i]);
     }
+    rep(i,0,n){
+        cout << seg.prod(a[i]+1, 2000000) << endl;
+    }
+
     return 0;
 }

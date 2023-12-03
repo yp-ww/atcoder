@@ -15,7 +15,7 @@ template<typename T> inline bool chmax(T &a, T b) { return ((a < b) ? (a = b, tr
 template<typename T> inline bool chmin(T &a, T b) { return ((a > b) ? (a = b, true) : (false)); }
 
 const double pi = 3.141592653589793;
-const ll INF = (ll)1e15;
+const ll INF = (ll)1e18+10;
 
 template<typename T>
 struct Cum2D{
@@ -38,31 +38,38 @@ struct Cum2D{
         assert(h1<=h2 && w1<=w2);
         return cum[h2+1][w2+1] - cum[h2+1][w1] - cum[h1][w2+1] + cum[h1][w1];
     }
-    // 0-indexed, グリッド無限連結時の範囲外にも対応、長方形領域 [h1,w1] から [h2,w2] までの和を取得
+    // 0-indexed, 無限グリッド（範囲外）にも対応、長方形領域 [h1,w1] から [h2,w2] までの和を取得
     T get_overRange(long long h1, long long w1, long long h2, long long w2){
-        // 完全に包含している領域の数
-        T res = cum.get(0,0,h-1,w-1);
-        return res;
+        assert(h1<=h2 && w1<=w2);
+        auto f = [&](long long hh, long long ww){
+            T res = cum[h][w] * (hh/h) * (ww/w);
+            long long remh = hh%h;
+            long long remw = ww%w;
+            res += cum[remh][w] * (ww/w);
+            res += cum[h][remw] * (hh/w);
+            res += cum[remh][remw];
+            return res;
+        };
+        return f(h2+1, w2+1) - f(h2+1, w1) - f(h1, w2+1) + f(h1, w1);
     }
 };
 
 int main()
 {
-    ll h,w;
-    cin>>h>>w;
-    vector<vector<ll>> x(h,vector<ll>(w));
-    rep(i,0,h)rep(j,0,w)cin>>x[i][j];
-
-    Cum2D<ll> cum(x);
-
-    ll q;
-    cin>>q;
-    while (q){
+    ll n,q;
+    cin>>n>>q;
+    vector<string> s(n);
+    rep(i,0,n)cin>>s[i];
+    vector<vector<ll>>arr(n,vector<ll>(n));
+    rep(i,0,n)rep(j,0,n){
+        if (s[i][j]=='B') arr[i][j] = 1;
+    }
+    Cum2D<ll> cum(arr);
+    while(q){
         q--;
         ll a,b,c,d;
         cin>>a>>b>>c>>d;
-        a--;b--;c--;d--;
-        cout << cum.get(a,b,c,d) << endl;
+        cout << cum.get_overRange(a,b,c,d) << endl;
     }
     return 0;
 }
