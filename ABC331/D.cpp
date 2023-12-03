@@ -43,8 +43,8 @@ struct Cum2D{
         assert(h1<=h2 && w1<=w2);
         auto f = [&](long long hh, long long ww){
             T res = cum[h][w] * (hh/h) * (ww/w);
-            long long remh = hh%h;
-            long long remw = ww%w;
+            int remh = hh%h;
+            int remw = ww%w;
             res += cum[remh][w] * (ww/w);
             res += cum[h][remw] * (hh/w);
             res += cum[remh][remw];
