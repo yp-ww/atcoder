@@ -22,49 +22,62 @@ int main()
     ll n,m;
     cin>>n>>m;
     vector<vector<ll>>g(n);
-
+    dsu uf(n);
     rep(i,0,m){
         ll a,b;
         cin>>a>>b;
         a--;b--;
         g[a].push_back(b);
         g[b].push_back(a);
+        uf.merge(a,b);
     }
-    vector<ll>vis(n);
-    function<ll(ll,vector<ll>)> dfs = [&](ll now, vector<ll> v){
-        vis[now] = true;
 
-        set<ll> st;
+    function<ll(ll,vector<ll>)> dfs = [&](ll now, vector<ll> v){
+        vector<bool> col(3);
         for (auto nex: g[now]){
-            if (!vis[nex]) continue;
-            st.insert(v[nex]);
+            if (v[nex]!=-1) col[v[nex]] = true;
         }
-        ll res = 3 - st.size();
-        
-        ll c = 0;
+
+        vector<ll> st;
+        vector<bool> vis(n);
+        function<void(ll)> f = [&](ll a){
+            vis[a] = true;
+            for (auto b: g[a]){
+                if (v[b]!=-1) continue;
+                if (vis[b]) continue;
+                if (a==now) st.push_back(b);
+                f(b);
+            }
+        };
+
+        f(now);
+
+        ll res = 0;
         rep(i,0,3){
-            if (st.find(i)!=st.end())continue;
-            c = i;
-            break;
-        }
-        v[now] = c;
-        for (auto nex: g[now]){
-            if (vis[nex]) continue;
-            res *= dfs(nex, v);
+            if (col[i]) continue;
+            ll temp = 1;
+            for (auto nex: st){
+                if (v[nex]!=-1) continue;
+                v[now] = i;
+                temp *= dfs(nex, v);
+            }
+            res += temp;
         }
         return res;
     };
 
-    vector<ll> init(n, -1);
-    ll ans = 1;
-    rep(i,0,n){
-        if (vis[i])continue;
-        ll temp = dfs(i, init);
-        cout << temp << endl;
-        ans *= temp;
+    vector<ll> st;
+    for (auto vec: uf.groups()){
+        ll ld = uf.leader(vec[0]);
+        st.push_back(ld);
     }
 
+    ll ans = 1;
+    for (auto s: st){
+        vector<ll> init(n, -1);
+        if (g[s].size()) ans *= dfs(s, init);
+        else ans *= 3;
+    }
     cout << ans << endl;
-
     return 0;
 }
