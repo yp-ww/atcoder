@@ -19,14 +19,31 @@ const ll INF = (ll)1e18+10;
 
 int main()
 {
-    ll n,b,k;
-    cin>>n>>b>>k;
-    vector<ll> num;
-    rep(i,0,k){
-        ll c;
-        cin>>c;
-        num.push_back(c);
+    ll n,k;
+    cin>>n>>k;
+    string s;
+    cin>>s;
+    using P = pair<ll,ll>;
+    priority_queue<P, vector<P>, greater<P>> hq;
+    rep(i,0,n-k+1){
+        hq.push({s[i]-'a', i});
     }
+    ll cnt = 0;
+    ll pos = n-k+1;
+    ll now = -1;
+    string ans = "";
+    while(cnt<k && !hq.empty()){
+        auto [c,p] = hq.top(); hq.pop();
+        if (now>=p) continue;
+        cnt++;
+        now = p;
+        if (pos<n){
+            hq.push({s[pos]-'a',pos});
+            pos++;
+        }
+        ans += char(c+'a');
+    }
+    cout << ans << endl;
     
     return 0;
 }
