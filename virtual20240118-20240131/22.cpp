@@ -33,21 +33,38 @@ int main()
 {
     ll n,m;
     cin>>n>>m;
-    vector<ll> a(m),b(m);
-    rep(i,0,m)cin>>a[i]>>b[i];
-    rep(i,0,m)a[i]--;
-    rep(i,0,m)b[i]--;
-    ll ans = 0;
+    vector<ll>a(n);
+    rep(i,0,n)cin>>a[i];
+    vector<vector<ll>> g(n);
     rep(i,0,m){
-        dsu uf(n);
-        rep(j,0,m){
-            if (i==j) continue;
-            uf.merge(a[j],b[j]);
+        ll x,y;
+        cin>>x>>y;
+        x--;y--;
+        g[x].push_back(y);
+    }
+    vector<ll> sell(n);
+    vector<bool> flag(n);
+    function<ll(ll)> f = [&](ll now){
+        if (flag[now]) return sell[now];
+        ll res = 0;
+        for (auto nex: g[now]){
+            chmax(res, max(f(nex),a[nex]));
         }
-        if (uf.groups().size()!=1) ans++;
+        flag[now] = true;
+        return sell[now] = res;
+    };
+    rep(i,0,n){
+        if (flag[i]) continue;
+        f(i);
+    }
+    ll ans = -INF;
+    rep(i,0,n){
+        if (g[i].size()==0) continue;
+        chmax(ans, sell[i]-a[i]);
     }
     cout << ans << endl;
-    
+
+
     // cout << fixed << setprecision(18);
     return 0;
 }

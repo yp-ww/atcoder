@@ -29,33 +29,42 @@ const vector<int> DY = { 0, 1, 0, -1 };
 const long long INF = (ll)1e18+10;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
+
 int main()
 {
-    string s;
-    cin>>s;
-    string t = s + s;
-    ll n = t.size();
-    ll m = s.size();
-    
-    ll base = (1LL<<m)-1;
-    ll now = 0;
-    rep(i,0,n){
-        if (t[n-i-1]=='o') now += 1LL<<i;
+    ll n;
+    cin>>n;
+    if (n==2){
+        cout << 1 << endl;
+        return 0;
     }
-    vector<ll> arr;
-    rep(i,0,m){
-        arr.push_back((now>>i)&base);
+    
+    set<ll> st;
+    for (ll i=2; i*i<=n; i++){
+        if (n%i) continue;
+        ll k = i;
+        ll now = n;
+        while(k<=now){
+            if (now%k==0){
+                now /= k;
+            }else{
+                now %= k;
+            }
+        }
+        if (now==1) st.insert(i);
+    }
+    
+    ll m = n-1;
+    for (ll i=2; i*i<=m; i++){
+        if (m%i) continue;
+        st.insert(i);
+        st.insert(m/i);
     }
 
-    vector<vector<ll>> dp(m+1, vector<ll>(1LL<<m, INF));
-    dp[0][0] = 0;
-    rep(i,0,m)rep(j,0,1LL<<m){
-        if (dp[i][j]==INF)continue;
-        chmin(dp[i+1][j], dp[i][j]);
-        chmin(dp[i+1][j|arr[i]], dp[i][j]+1);
-    }
-    assert(dp[m][(1LL<<m)-1]!=INF);
-    cout << dp[m][(1LL<<m)-1] << endl;
+    st.insert(n);
+    st.insert(m);
+    ll ans = st.size();
+    cout << ans << endl;
     
     // cout << fixed << setprecision(18);
     return 0;

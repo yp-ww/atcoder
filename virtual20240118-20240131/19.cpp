@@ -11,7 +11,7 @@ template <class T> using priority_queue_rev = priority_queue<T, vector<T>, great
 #define rrep(i, a, b) for(ll i=a; i>=b; i--)
 #define all(a) (a).begin(), (a).end()
 #define smod(n, m) ((((n) % (m)) + (m)) % (m)) // 非負mod
-#define YesNo(bool) if(bool){cout<<"YES"<<endl;}else{cout<<"NO"<<endl;}
+#define YesNo(bool) if(bool){cout<<"Yes"<<endl;}else{cout<<"No"<<endl;}
 
 template<typename T> inline bool chmax(T &a, T b) { return ((a < b) ? (a = b, true) : (false)); }
 template<typename T> inline bool chmin(T &a, T b) { return ((a > b) ? (a = b, true) : (false)); }
@@ -31,37 +31,44 @@ ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次�
 
 int main()
 {
-    ll h,w;
-    cin>>h>>w;
-    vector<string> s(h);
-    rep(i,0,h)cin>>s[i];
-    
-    deque<tuple<ll,ll,ll>> q;
-    vector<vector<ll>> v(h,vector<ll>(w,INF));
-    rep(i,0,h)rep(j,0,w){
-        if (s[i][j]=='s') q.push_back({0,i,j});
+    ll h,w,k;
+    cin>>h>>w>>k;
+    vector<ll>a(h), b(w);
+    rep(i,0,h)cin>>a[i];
+    rep(i,0,w)cin>>b[i];
+
+    ll ta = accumulate(all(a), 0LL);
+    ll tb = accumulate(all(b), 0LL);
+    if (ta%k != tb%k){
+        cout << -1 << endl;
+        return 0;
     }
 
-    while(!q.empty()){
-        auto [d,sh,sw] = q.front(); q.pop_front();
-        if (s[sh][sw]=='g'){
-            YesNo(true);
-            return 0;
-        }
-        v[sh][sw] = d;
-        rep(i,0,4){
-            ll nh = sh + DY[i];
-            ll nw = sw + DX[i];
-            if (nh<0 || nh>=h || nw<0 || nw>=w) continue;
-            if (v[nh][nw]!=INF) continue;
-            if (s[nh][nw]=='.' || s[nh][nw]=='g'){
-                q.push_front({d,nh,nw});
-            }else if(s[nh][nw]=='#'){
-                if (d<2) q.push_back({d+1,nh,nw});
-            }
-        }
+    vector<ll> va(k,-INF);
+    ll st = (k-1)*w;
+    while(st--){
+        ll amari = st%k;
+        if (va[amari]!=-INF) break;
+        va[amari] = st;
     }
-    YesNo(false);   
+
+    vector<ll> vb(k,-INF);
+    st = (k-1)*h;
+    while(st--){
+        ll amari = st%k;
+        if (vb[amari]!=-INF) break;
+        vb[amari] = st;
+    }
+
+    ll x = 0;
+    rep(i,0,h) x += va[a[i]];
+    ll y = 0;
+    rep(i,0,w) y += vb[b[i]];
+    ll ans = 0;
+    chmax(ans, x);
+    chmax(ans, y);
+    cout << ans << endl;
+
     // cout << fixed << setprecision(18);
     return 0;
 }

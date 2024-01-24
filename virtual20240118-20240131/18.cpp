@@ -29,44 +29,77 @@ const vector<int> DY = { 0, 1, 0, -1 };
 const long long INF = (ll)1e18+10;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
+template<typename T>
+struct Cum2D{
+    vector<vector<T>> cum;
+    int h,w;
+    // コンストラクタ
+    Cum2D() {}
+    Cum2D(vector<vector<T>>& arr){
+        h = arr.size();
+        w = arr[0].size();
+        cum.resize(h+1, vector<T>(w+1, 0));
+        // 累積和を計算
+        for (int i=1; i<h+1; i++){
+            for (int j=1; j<w+1; j++){
+                cum[i][j] = arr[i-1][j-1] + cum[i][j-1] + cum[i-1][j] - cum[i-1][j-1];
+            }
+        }
+    }
+    // 0-indexed, 長方形領域 [h1,w1] から [h2,w2] までの和を取得
+    T get(int h1, int w1, int h2, int w2){
+        assert(h1<=h2 && w1<=w2);
+        return cum[h2+1][w2+1] - cum[h2+1][w1] - cum[h1][w2+1] + cum[h1][w1];
+    }
+    // 0-indexed, 無限グリッド（範囲外）にも対応、長方形領域 [h1,w1] から [h2,w2] までの和を取得
+    T get_overRange(long long h1, long long w1, long long h2, long long w2){
+        assert(h1<=h2 && w1<=w2);
+        auto f = [&](long long hh, long long ww){
+            T res = cum[h][w] * (hh/h) * (ww/w);
+            int remh = hh%h;
+            int remw = ww%w;
+            res += cum[remh][w] * (ww/w);
+            res += cum[h][remw] * (hh/w);
+            res += cum[remh][remw];
+            return res;
+        };
+        return f(h2+1, w2+1) - f(h2+1, w1) - f(h1, w2+1) + f(h1, w1);
+    }
+};
+
+
 int main()
 {
     ll h,w,k;
     cin>>h>>w>>k;
-    vector<ll>a(h), b(w);
-    rep(i,0,h)cin>>a[i];
-    rep(i,0,w)cin>>b[i];
-
-    ll ta = accumulate(all(a), 0LL);
-    ll tb = accumulate(all(b), 0LL);
-    if (ta%k != tb%k){
-        cout << -1 << endl;
-        return 0;
+    k--;
+    vector<string> s(h);
+    rep(i,0,h)cin>>s[i];
+    vector<vector<ll>> ng(h,vector<ll>(w));
+    rep(i,0,h)rep(j,0,w){
+        if (s[i][j]=='x'){
+            ng[i][j] = 1;
+        }
     }
 
-    vector<ll> va(k,-INF);
-    ll st = (k-1)*w;
-    while(st--){
-        ll amari = st%k;
-        if (va[amari]!=-INF) break;
-        va[amari] = st;
-    }
-
-    vector<ll> vb(k,-INF);
-    st = (k-1)*h;
-    while(st--){
-        ll amari = st%k;
-        if (vb[amari]!=-INF) break;
-        vb[amari] = st;
-    }
-
-    ll x = 0;
-    rep(i,0,h) x += va[a[i]];
-    ll y = 0;
-    rep(i,0,w) y += vb[b[i]];
+    Cum2D<ll> cum(ng);
     ll ans = 0;
-    chmax(ans, x);
-    chmax(ans, y);
+    rep(i,0,h)rep(j,0,w){
+        if (i-k<0 || i+k>=h || j-k<0 || j+k>=w) continue;
+        ll sh = i;
+        ll sw = j - k;
+        ll lh = i;
+        ll lw = j + k;        
+        bool flag = true;
+        while(sw<=lw){
+            if (cum.get(sh,sw,lh,lw)) flag = false;
+            sw++;
+            lw--;
+            sh--;
+            lh++;
+        }
+        if (flag) ans++;
+    }
     cout << ans << endl;
 
     // cout << fixed << setprecision(18);

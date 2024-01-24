@@ -29,23 +29,49 @@ const vector<int> DY = { 0, 1, 0, -1 };
 const long long INF = (ll)1e18+10;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
-
 int main()
 {
     ll n;
     cin>>n;
-    ll ans = 1;
-    rep(i,2,min((ll)1000100, n)){
-        ll now = n;
-        while(now>i){
-            if (now%i==0) now/=i;
-            else now %= i;
-        }
-        if (now==1) ans++;
-    }
+    vector<vector<ll>> a(n, vector<ll>(5));
+    rep(i,0,n)rep(j,0,5)cin>>a[i][j];
 
-    cout << ans << endl;
-    
+    ll l = 0;
+    ll r = INF;
+    while(r-l>1){
+        ll mid = (l+r)/2;
+        set<ll> st;
+        rep(i,0,n){
+            ll temp = 0;
+            rep(j,0,5){
+                if (a[i][j]>=mid){
+                    temp += 1LL<<j;
+                }
+            }
+            st.insert(temp);
+        }
+        vector<ll> arr;
+        for (auto x: st) arr.push_back(x);
+        bool flag = false;
+        if (arr.size()==1){
+            if (arr[0]==(1LL<<5)-1) flag = true;
+        }
+        if (arr.size()==2){
+            if ((arr[0]|arr[1])==(1LL<<5)-1) flag = true;        
+        }
+        if (arr.size()>=3){
+            rep(i,0,arr.size()){
+                rep(j,i+1,arr.size()){
+                    rep(k,j+1,arr.size()){
+                        if ((arr[i]|arr[j]|arr[k])==(1LL<<5)-1) flag = true;
+                    }
+                }
+            }
+        }
+        if (flag) l = mid;
+        else r = mid;
+    }
+    cout << l << endl;
     // cout << fixed << setprecision(18);
     return 0;
 }

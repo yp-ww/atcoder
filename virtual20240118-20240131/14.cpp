@@ -31,24 +31,31 @@ ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次�
 
 int main()
 {
-    ll n,k;
-    cin>>n>>k;
-    vector<ll> v(n);
-    rep(i,0,n)cin>>v[i];
-    ll ans = 0;
-    rep(i,0,k)rep(l,0,n+1)rep(r,0,n+1){
-        if (l+r>n) continue;
-        if (i+l+r>k) continue;
-        if (l+r<i) continue;
-        vector<ll> arr;
-        rep(j,0,l) arr.push_back(v[j]);
-        rrep(j,n-1,n-r) arr.push_back(v[j]);
-        sort(all(arr));
-        ll tot = accumulate(all(arr), 0LL);
-        rep(j,0,i) tot -= arr[j];
-        chmax(ans, tot);
+    string s;
+    cin>>s;
+    string t = s + s;
+    ll n = t.size();
+    ll m = s.size();
+    
+    ll base = (1LL<<m)-1;
+    ll now = 0;
+    rep(i,0,n){
+        if (t[n-i-1]=='o') now += 1LL<<i;
     }
-    cout << ans << endl;
+    vector<ll> arr;
+    rep(i,0,m){
+        arr.push_back((now>>i)&base);
+    }
+
+    vector<vector<ll>> dp(m+1, vector<ll>(1LL<<m, INF));
+    dp[0][0] = 0;
+    rep(i,0,m)rep(j,0,1LL<<m){
+        if (dp[i][j]==INF)continue;
+        chmin(dp[i+1][j], dp[i][j]);
+        chmin(dp[i+1][j|arr[i]], dp[i][j]+1);
+    }
+    assert(dp[m][(1LL<<m)-1]!=INF);
+    cout << dp[m][(1LL<<m)-1] << endl;
     
     // cout << fixed << setprecision(18);
     return 0;

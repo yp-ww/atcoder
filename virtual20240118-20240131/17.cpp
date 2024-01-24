@@ -29,79 +29,46 @@ const vector<int> DY = { 0, 1, 0, -1 };
 const long long INF = (ll)1e18+10;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
-template<typename T>
-struct Cum2D{
-    vector<vector<T>> cum;
-    int h,w;
-    // コンストラクタ
-    Cum2D() {}
-    Cum2D(vector<vector<T>>& arr){
-        h = arr.size();
-        w = arr[0].size();
-        cum.resize(h+1, vector<T>(w+1, 0));
-        // 累積和を計算
-        for (int i=1; i<h+1; i++){
-            for (int j=1; j<w+1; j++){
-                cum[i][j] = arr[i-1][j-1] + cum[i][j-1] + cum[i-1][j] - cum[i-1][j-1];
-            }
-        }
+using mint = modint1000000007;
+
+// n が固定かつ n が巨大 (k ≤ 10^7, n ≤ 10^9) で法 P が素数のとき
+const long long MOD = (long long)1e9+7;
+vector<long long> fact_inv, inv, COM;
+// init_nCk: 二項係数のための前処理
+// 前処理の計算量: O(k)
+void init_nCk(int n, int SIZE) {
+    fact_inv.resize(SIZE + 5);
+    inv.resize(SIZE + 5);
+    fact_inv[0] = fact_inv[1] = 1;
+    inv[1] = 1;
+    for (int i = 2; i < SIZE + 5; i++) {
+        inv[i] = MOD - inv[MOD % i] * (MOD / i) % MOD;
+        fact_inv[i] = fact_inv[i-1] * inv[i] % MOD;
     }
-    // 0-indexed, 長方形領域 [h1,w1] から [h2,w2] までの和を取得
-    T get(int h1, int w1, int h2, int w2){
-        assert(h1<=h2 && w1<=w2);
-        return cum[h2+1][w2+1] - cum[h2+1][w1] - cum[h1][w2+1] + cum[h1][w1];
+    COM.resize(SIZE + 5);
+    COM[0] = 1;
+    for (int i = 1; i < SIZE + 5; i++) {
+        COM[i] = COM[i-1] * ((n-i+1) * inv[i] % MOD) % MOD;
     }
-    // 0-indexed, 無限グリッド（範囲外）にも対応、長方形領域 [h1,w1] から [h2,w2] までの和を取得
-    T get_overRange(long long h1, long long w1, long long h2, long long w2){
-        assert(h1<=h2 && w1<=w2);
-        auto f = [&](long long hh, long long ww){
-            T res = cum[h][w] * (hh/h) * (ww/w);
-            int remh = hh%h;
-            int remw = ww%w;
-            res += cum[remh][w] * (ww/w);
-            res += cum[h][remw] * (hh/w);
-            res += cum[remh][remw];
-            return res;
-        };
-        return f(h2+1, w2+1) - f(h2+1, w1) - f(h1, w2+1) + f(h1, w1);
-    }
-};
+}
+// nCk: MODでの二項係数を求める(前処理 int_nCk が必要)
+// クエリの計算量: O(1)
+long long nCk(int k) {
+    assert(!(k < 0));
+    return COM[k];
+}
 
 
 int main()
 {
-    ll h,w,k;
-    cin>>h>>w>>k;
-    k--;
-    vector<string> s(h);
-    rep(i,0,h)cin>>s[i];
-    vector<vector<ll>> ng(h,vector<ll>(w));
-    rep(i,0,h)rep(j,0,w){
-        if (s[i][j]=='x'){
-            ng[i][j] = 1;
-        }
-    }
-
-    Cum2D<ll> cum(ng);
-    ll ans = 0;
-    rep(i,0,h)rep(j,0,w){
-        if (i-k<0 || i+k>=h || j-k<0 || j+k>=w) continue;
-        ll sh = i;
-        ll sw = j - k;
-        ll lh = i;
-        ll lw = j + k;        
-        bool flag = true;
-        while(sw<=lw){
-            if (cum.get(sh,sw,lh,lw)) flag = false;
-            sw++;
-            lw--;
-            sh--;
-            lh++;
-        }
-        if (flag) ans++;
-    }
-    cout << ans << endl;
-
+    ll n,a,b;
+    cin>>n>>a>>b;
+    ll mod = 1000000007;
+    mint ans = pow_mod(2,n,mod)-1;
+    init_nCk(n, 200100);
+    ans -= nCk(a);
+    ans -= nCk(b);
+    cout << ans.val() << endl;
     // cout << fixed << setprecision(18);
     return 0;
 }

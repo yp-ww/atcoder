@@ -29,46 +29,40 @@ const vector<int> DY = { 0, 1, 0, -1 };
 const long long INF = (ll)1e18+10;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
-ll op(ll a, ll b){ return min(a,b); }
-ll e(){ return INF; }
+ll op(ll a,ll b){ return max(a,b); }
+ll e(){ return 0LL; }
 
 int main()
 {
-    ll n;
-    cin>>n;
-    vector<ll> a(n);
-    rep(i,0,n)cin>>a[i];
-    auto b = a;
-    sort(all(b));
-    map<ll,ll> mp;
-    rep(i,0,n)mp[a[i]]++;
-    rep(i,0,n){
-        ll idx = lower_bound(all(b), a[i]) - b.begin();
-        ll pos = idx + mp[a[i]] - 1;
-        mp[a[i]]--;
-        a[i] = pos;
-    }
-
-    segtree<ll,op,e> seg(n+1);
-    rep(i,0,n) seg.set(a[i],i);
+    ll n,m;
+    cin>>n>>m;
+    vector<ll>a(m),b(m);
+    rep(i,0,m)cin>>a[i]>>b[i];
+    map<ll,vector<ll>> mp;
+    rep(i,0,m) mp[a[i]].push_back(b[i]);
     
-    vector<bool> v(n);
+    segtree<ll,op,e> seg(200200);
+    vector<ll> temp(200200);
     ll ans = 0;
-    rep(i,0,n){
-        if (v[i]) continue;
-        ans++;
-        ll now = i;
-        while(1){
-            v[now] = true;
-            seg.set(a[now],INF);
-            ll nex = seg.prod(a[now]+1,n);
-            if (nex==INF) break;
-            if (nex<now) break;
-            now = nex;
+    
+    auto itr = mp.end();
+    
+    while(itr!=mp.begin()){
+        itr--;
+        auto [x,arr] = *itr;
+        for (auto y: arr){
+            ll cnt = seg.prod(y+1,200200) + 1;
+            temp[y] = cnt;
+            chmax(ans, cnt);
+        }
+        for (auto y: arr){
+            if (seg.get(y) < temp[y]){
+                seg.set(y, temp[y]);
+            }
         }
     }
     cout << ans << endl;
-    
+
     // cout << fixed << setprecision(18);
     return 0;
 }

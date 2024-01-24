@@ -31,8 +31,16 @@ ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次�
 
 int main()
 {
-       
-    
-    // cout << fixed << setprecision(18);
+    ll n,m,d;
+    cin>>n>>m>>d;
+    double ans;
+    if (d==0){
+        ans = (double)(m-1)/(double)n;
+    }else{
+        ans = (double)(m-1)*2*(n-d)/(double)(n*n);
+    }
+        
+    cout << fixed << setprecision(18);
+    cout << ans << endl;
     return 0;
 }

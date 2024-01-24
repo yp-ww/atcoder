@@ -29,43 +29,24 @@ const vector<int> DY = { 0, 1, 0, -1 };
 const long long INF = (ll)1e18+10;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
-ll op(ll a, ll b){ return min(a,b); }
-ll e(){ return INF; }
-
 int main()
 {
-    ll n;
-    cin>>n;
-    vector<ll> a(n);
-    rep(i,0,n)cin>>a[i];
-    auto b = a;
-    sort(all(b));
-    map<ll,ll> mp;
-    rep(i,0,n)mp[a[i]]++;
-    rep(i,0,n){
-        ll idx = lower_bound(all(b), a[i]) - b.begin();
-        ll pos = idx + mp[a[i]] - 1;
-        mp[a[i]]--;
-        a[i] = pos;
-    }
-
-    segtree<ll,op,e> seg(n+1);
-    rep(i,0,n) seg.set(a[i],i);
-    
-    vector<bool> v(n);
+    ll n,k;
+    cin>>n>>k;
+    vector<ll> v(n);
+    rep(i,0,n)cin>>v[i];
     ll ans = 0;
-    rep(i,0,n){
-        if (v[i]) continue;
-        ans++;
-        ll now = i;
-        while(1){
-            v[now] = true;
-            seg.set(a[now],INF);
-            ll nex = seg.prod(a[now]+1,n);
-            if (nex==INF) break;
-            if (nex<now) break;
-            now = nex;
-        }
+    rep(i,0,k)rep(l,0,n+1)rep(r,0,n+1){
+        if (l+r>n) continue;
+        if (i+l+r>k) continue;
+        if (l+r<i) continue;
+        vector<ll> arr;
+        rep(j,0,l) arr.push_back(v[j]);
+        rrep(j,n-1,n-r) arr.push_back(v[j]);
+        sort(all(arr));
+        ll tot = accumulate(all(arr), 0LL);
+        rep(j,0,i) tot -= arr[j];
+        chmax(ans, tot);
     }
     cout << ans << endl;
     

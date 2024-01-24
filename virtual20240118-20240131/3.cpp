@@ -29,43 +29,50 @@ const vector<int> DY = { 0, 1, 0, -1 };
 const long long INF = (ll)1e18+10;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
-ll op(ll a, ll b){ return min(a,b); }
-ll e(){ return INF; }
-
 int main()
 {
-    ll n;
-    cin>>n;
-    vector<ll> a(n);
+    ll n,m,t;
+    cin>>n>>m>>t;
+    vector<ll>a(n);
     rep(i,0,n)cin>>a[i];
-    auto b = a;
-    sort(all(b));
-    map<ll,ll> mp;
-    rep(i,0,n)mp[a[i]]++;
-    rep(i,0,n){
-        ll idx = lower_bound(all(b), a[i]) - b.begin();
-        ll pos = idx + mp[a[i]] - 1;
-        mp[a[i]]--;
-        a[i] = pos;
+    vector<vector<pair<ll,ll>>> to(n), ba(n);
+    rep(i,0,m){
+        ll u,v,c;
+        cin>>u>>v>>c;
+        u--;v--;
+        to[u].push_back({v,c});
+        ba[v].push_back({u,c});
     }
 
-    segtree<ll,op,e> seg(n+1);
-    rep(i,0,n) seg.set(a[i],i);
-    
-    vector<bool> v(n);
+    priority_queue_rev<pair<ll,ll>> hq;
+    vector<ll> bd(n,INF);
+    hq.push({0,0});
+    while(!hq.empty()){
+        auto [d,now] = hq.top(); hq.pop();
+        if (bd[now]!=INF) continue;
+        bd[now] = d;
+        for (auto [pre,c]: ba[now]){
+            if (bd[pre]!=INF) continue;
+            hq.push({d+c,pre});
+        }
+    }
+
+    vector<ll> td(n,INF);
+    hq.push({0,0});
+    while(!hq.empty()){
+        auto [d,now] = hq.top(); hq.pop();
+        if (td[now]!=INF) continue;
+        td[now] = d;
+        for (auto [nex,c]: to[now]){
+            if (td[nex]!=INF) continue;
+            hq.push({d+c,nex});
+        }
+    }
     ll ans = 0;
     rep(i,0,n){
-        if (v[i]) continue;
-        ans++;
-        ll now = i;
-        while(1){
-            v[now] = true;
-            seg.set(a[now],INF);
-            ll nex = seg.prod(a[now]+1,n);
-            if (nex==INF) break;
-            if (nex<now) break;
-            now = nex;
-        }
+        ll rem = t-td[i]-bd[i];
+        if (rem<0) continue;
+        chmax(ans, rem*a[i]);
     }
     cout << ans << endl;
     

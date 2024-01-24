@@ -29,8 +29,9 @@ const vector<int> DY = { 0, 1, 0, -1 };
 const long long INF = (ll)1e18+10;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
-ll op(ll a, ll b){ return min(a,b); }
-ll e(){ return INF; }
+using mint = modint998244353;
+ll op(ll a, ll b){ return a+b; }
+ll e(){return 0LL; }
 
 int main()
 {
@@ -38,37 +39,25 @@ int main()
     cin>>n;
     vector<ll> a(n);
     rep(i,0,n)cin>>a[i];
-    auto b = a;
-    sort(all(b));
-    map<ll,ll> mp;
-    rep(i,0,n)mp[a[i]]++;
-    rep(i,0,n){
-        ll idx = lower_bound(all(b), a[i]) - b.begin();
-        ll pos = idx + mp[a[i]] - 1;
-        mp[a[i]]--;
-        a[i] = pos;
-    }
 
-    segtree<ll,op,e> seg(n+1);
-    rep(i,0,n) seg.set(a[i],i);
-    
-    vector<bool> v(n);
-    ll ans = 0;
+    segtree<ll,op,e> seg(200200), seg2(200200);
+
+    mint now = 0;
     rep(i,0,n){
-        if (v[i]) continue;
-        ans++;
-        ll now = i;
-        while(1){
-            v[now] = true;
-            seg.set(a[now],INF);
-            ll nex = seg.prod(a[now]+1,n);
-            if (nex==INF) break;
-            if (nex<now) break;
-            now = nex;
-        }
+        ll l = seg.prod(0,a[i]);
+        ll r = seg2.prod(a[i],200200);
+        now += l * a[i] * 2;
+        now += r * 2;
+        now += a[i];
+        mint ans = now;
+        ans /= (i+1)*(i+1);
+        cout << ans.val() << endl;
+        seg.set(a[i], seg.get(a[i])+1);
+        seg2.set(a[i], seg2.get(a[i])+a[i]);
     }
-    cout << ans << endl;
     
+
+
     // cout << fixed << setprecision(18);
     return 0;
 }

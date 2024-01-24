@@ -11,7 +11,7 @@ template <class T> using priority_queue_rev = priority_queue<T, vector<T>, great
 #define rrep(i, a, b) for(ll i=a; i>=b; i--)
 #define all(a) (a).begin(), (a).end()
 #define smod(n, m) ((((n) % (m)) + (m)) % (m)) // 非負mod
-#define YesNo(bool) if(bool){cout<<"Yes"<<endl;}else{cout<<"No"<<endl;}
+#define YesNo(bool) if(bool){cout<<"YES"<<endl;}else{cout<<"NO"<<endl;}
 
 template<typename T> inline bool chmax(T &a, T b) { return ((a < b) ? (a = b, true) : (false)); }
 template<typename T> inline bool chmin(T &a, T b) { return ((a > b) ? (a = b, true) : (false)); }
@@ -31,31 +31,37 @@ ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次�
 
 int main()
 {
-    ll n;
-    cin>>n;
-    vector<ll>a(n);
-    rep(i,0,n)cin>>a[i];
-    auto b = a;
-    sort(all(b));
-    map<ll,ll> mp;
-    rep(i,0,n) mp[b[i]]=i;
-    vector<ll> ev,od;
-    rep(i,0,n){
-        if (i%2==0){
-            ev.push_back(mp[a[i]]);
-        }else{
-            od.push_back(mp[a[i]]);
+    ll h,w;
+    cin>>h>>w;
+    vector<string> s(h);
+    rep(i,0,h)cin>>s[i];
+    
+    deque<tuple<ll,ll,ll>> q;
+    vector<vector<ll>> v(h,vector<ll>(w,INF));
+    rep(i,0,h)rep(j,0,w){
+        if (s[i][j]=='s') q.push_back({0,i,j});
+    }
+
+    while(!q.empty()){
+        auto [d,sh,sw] = q.front(); q.pop_front();
+        if (s[sh][sw]=='g'){
+            YesNo(true);
+            return 0;
+        }
+        v[sh][sw] = d;
+        rep(i,0,4){
+            ll nh = sh + DY[i];
+            ll nw = sw + DX[i];
+            if (nh<0 || nh>=h || nw<0 || nw>=w) continue;
+            if (v[nh][nw]!=INF) continue;
+            if (s[nh][nw]=='.' || s[nh][nw]=='g'){
+                q.push_front({d,nh,nw});
+            }else if(s[nh][nw]=='#'){
+                if (d<2) q.push_back({d+1,nh,nw});
+            }
         }
     }
-    sort(all(ev));
-    sort(all(od));
-    ll cnt = 0;
-    for (auto x: ev){
-        if (x%2) cnt++;
-    }
-    cout << cnt << endl;
-    
-    
+    YesNo(false);   
     // cout << fixed << setprecision(18);
     return 0;
 }

@@ -31,40 +31,31 @@ ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次�
 
 int main()
 {
-    ll n,m;
-    cin>>n>>m;
+    ll n;
+    cin>>n;
     vector<ll>a(n);
     rep(i,0,n)cin>>a[i];
-    vector<vector<ll>> g(n);
-    rep(i,0,m){
-        ll x,y;
-        cin>>x>>y;
-        x--;y--;
-        g[x].push_back(y);
-    }
-    vector<ll> sell(n);
-    vector<bool> flag(n);
-    function<ll(ll)> f = [&](ll now){
-        if (flag[now]) return sell[now];
-        ll res = 0;
-        for (auto nex: g[now]){
-            chmax(res, max(f(nex),a[nex]));
+    auto b = a;
+    sort(all(b));
+    map<ll,ll> mp;
+    rep(i,0,n) mp[b[i]]=i;
+    vector<ll> ev,od;
+    rep(i,0,n){
+        if (i%2==0){
+            ev.push_back(mp[a[i]]);
+        }else{
+            od.push_back(mp[a[i]]);
         }
-        flag[now] = true;
-        return sell[now] = res;
-    };
-    rep(i,0,n){
-        if (flag[i]) continue;
-        f(i);
     }
-    ll ans = -INF;
-    rep(i,0,n){
-        if (g[i].size()==0) continue;
-        chmax(ans, sell[i]-a[i]);
+    sort(all(ev));
+    sort(all(od));
+    ll cnt = 0;
+    for (auto x: ev){
+        if (x%2) cnt++;
     }
-    cout << ans << endl;
-
-
+    cout << cnt << endl;
+    
+    
     // cout << fixed << setprecision(18);
     return 0;
 }
