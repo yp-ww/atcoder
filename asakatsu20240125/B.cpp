@@ -29,49 +29,23 @@ const vector<int> DY = { 0, 1, 0, -1 };
 const long long INF = (ll)1e18+10;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
-using mint = modint998244353;
-
-// combination mod prime
-// https://youtu.be/8uowVvQ_-Mo?t=6002
-// https://youtu.be/Tgd_zLfRZOQ?t=9928
-struct modinv {
-    int n; vector<mint> d;
-    modinv(): n(2), d({0,1}) {}
-    mint operator()(int i) {
-        while (n <= i) d.push_back(-d[mint::mod()%n]*(mint::mod()/n)), ++n;
-        return d[i];
-    }
-    mint operator[](int i) const { return d[i];}
-} invs;
-struct modfact {
-    int n; vector<mint> d;
-    modfact(): n(2), d({1,1}) {}
-    mint operator()(int i) {
-        while (n <= i) d.push_back(d.back()*n), ++n;
-        return d[i];
-    }
-    mint operator[](int i) const { return d[i];}
-} facts;
-struct modfactinv {
-    int n; vector<mint> d;
-    modfactinv(): n(2), d({1,1}) {}
-    mint operator()(int i) {
-        while (n <= i) d.push_back(d.back()*invs(n)), ++n;
-        return d[i];
-    }
-    mint operator[](int i) const { return d[i];}
-} ifacts;
-mint comb(int n, int k) {
-    if (n < k || k < 0) return 0;
-    return facts(n)*ifacts(k)*ifacts(n-k);
-}
-
+ll op(ll a,ll b){ return a+b; }
+ll e(){ return 0LL; }
 
 int main()
 {
-    ll d;
-    cin>>d;
-    cout << comb(d*2-1,d).val() << endl;
+    ll n;
+    cin>>n;
+    vector<ll>a(n);
+    rep(i,0,n)cin>>a[i];
+    ll _min = INF;
+
+    ll ans = 0;
+    rep(i,0,n){
+        chmin(_min,a[i]);
+        if (_min==a[i])ans++;
+    }
+    cout << ans << endl;
     
     // cout << fixed << setprecision(18);
     return 0;

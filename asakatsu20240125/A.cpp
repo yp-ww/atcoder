@@ -11,7 +11,7 @@ template <class T> using priority_queue_rev = priority_queue<T, vector<T>, great
 #define rrep(i, a, b) for(ll i=a; i>=b; i--)
 #define all(a) (a).begin(), (a).end()
 #define smod(n, m) ((((n) % (m)) + (m)) % (m)) // 非負mod
-#define YesNo(bool) if(bool){cout<<"Yes"<<endl;}else{cout<<"No"<<endl;}
+#define YesNo(bool) if(bool){cout<<"YES"<<endl;}else{cout<<"NO"<<endl;}
 
 template<typename T> inline bool chmax(T &a, T b) { return ((a < b) ? (a = b, true) : (false)); }
 template<typename T> inline bool chmin(T &a, T b) { return ((a > b) ? (a = b, true) : (false)); }
@@ -29,49 +29,17 @@ const vector<int> DY = { 0, 1, 0, -1 };
 const long long INF = (ll)1e18+10;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
-using mint = modint998244353;
-
-// combination mod prime
-// https://youtu.be/8uowVvQ_-Mo?t=6002
-// https://youtu.be/Tgd_zLfRZOQ?t=9928
-struct modinv {
-    int n; vector<mint> d;
-    modinv(): n(2), d({0,1}) {}
-    mint operator()(int i) {
-        while (n <= i) d.push_back(-d[mint::mod()%n]*(mint::mod()/n)), ++n;
-        return d[i];
-    }
-    mint operator[](int i) const { return d[i];}
-} invs;
-struct modfact {
-    int n; vector<mint> d;
-    modfact(): n(2), d({1,1}) {}
-    mint operator()(int i) {
-        while (n <= i) d.push_back(d.back()*n), ++n;
-        return d[i];
-    }
-    mint operator[](int i) const { return d[i];}
-} facts;
-struct modfactinv {
-    int n; vector<mint> d;
-    modfactinv(): n(2), d({1,1}) {}
-    mint operator()(int i) {
-        while (n <= i) d.push_back(d.back()*invs(n)), ++n;
-        return d[i];
-    }
-    mint operator[](int i) const { return d[i];}
-} ifacts;
-mint comb(int n, int k) {
-    if (n < k || k < 0) return 0;
-    return facts(n)*ifacts(k)*ifacts(n-k);
-}
-
-
 int main()
 {
-    ll d;
-    cin>>d;
-    cout << comb(d*2-1,d).val() << endl;
+    string s;
+    cin>>s;
+    bool flag = false;
+    if (s.find('3')!=string::npos){
+        flag = true;
+    }
+    ll t = stoll(s);
+    if (t%3==0) flag = true;
+    YesNo(flag);
     
     // cout << fixed << setprecision(18);
     return 0;

@@ -29,49 +29,62 @@ const vector<int> DY = { 0, 1, 0, -1 };
 const long long INF = (ll)1e18+10;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
-using mint = modint998244353;
-
-// combination mod prime
-// https://youtu.be/8uowVvQ_-Mo?t=6002
-// https://youtu.be/Tgd_zLfRZOQ?t=9928
-struct modinv {
-    int n; vector<mint> d;
-    modinv(): n(2), d({0,1}) {}
-    mint operator()(int i) {
-        while (n <= i) d.push_back(-d[mint::mod()%n]*(mint::mod()/n)), ++n;
-        return d[i];
-    }
-    mint operator[](int i) const { return d[i];}
-} invs;
-struct modfact {
-    int n; vector<mint> d;
-    modfact(): n(2), d({1,1}) {}
-    mint operator()(int i) {
-        while (n <= i) d.push_back(d.back()*n), ++n;
-        return d[i];
-    }
-    mint operator[](int i) const { return d[i];}
-} facts;
-struct modfactinv {
-    int n; vector<mint> d;
-    modfactinv(): n(2), d({1,1}) {}
-    mint operator()(int i) {
-        while (n <= i) d.push_back(d.back()*invs(n)), ++n;
-        return d[i];
-    }
-    mint operator[](int i) const { return d[i];}
-} ifacts;
-mint comb(int n, int k) {
-    if (n < k || k < 0) return 0;
-    return facts(n)*ifacts(k)*ifacts(n-k);
-}
-
-
 int main()
 {
-    ll d;
-    cin>>d;
-    cout << comb(d*2-1,d).val() << endl;
+    ll n,m;
+    cin>>n>>m;
+    string s,t;
+    cin>>s>>t;
+    queue<ll> q;
+    vector<bool> v(n);
+    rep(i,0,n-m+1){
+        bool flag = true;
+        rep(j,0,m){
+            if (s[i+j]!=t[j]) flag = false; 
+        }
+        if (flag) q.push(i);
+    }
+    while(!q.empty()){
+        ll now = q.front(); q.pop();
+        rep(i,0,m){
+            v[now+i] = true;
+        }
+        ll l = now;
+        rep(st,l-m+1,l){
+            if (st<0) continue;
+            bool flag2 = true;
+            bool all1 = true;
+            rep(j,0,m){
+                if (st+j>=n){
+                    all1 = true;break;
+                }
+                if (!v[st+j]) all1 = false;
+                if (!(v[st+j]|s[st+j]==t[j])) flag2 = false;
+            }
+            if (all1) continue;
+            if (flag2) q.push(st);
+        }
+
+
+        ll r = now+m;
+        rep(st,r-m+1,r+m){
+            if (st>=n) break;
+            bool flag2 = true;
+            bool all1 = true;
+            rep(j,0,m){
+                if (st+j>=n){
+                    all1 = true;break;
+                }
+                if (!v[st+j]) all1 = false;
+                if (!(v[st+j]|s[st+j]==t[j])) flag2 = false;
+            }
+            if (all1) continue;
+            if (flag2) q.push(st);
+        }    
+    }
+    bool flag = true;
+    rep(i,0,n) if(!v[i]) flag = false;
+    YesNo(flag);
     
     // cout << fixed << setprecision(18);
     return 0;
