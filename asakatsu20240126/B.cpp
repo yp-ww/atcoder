@@ -31,71 +31,25 @@ ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次�
 
 int main()
 {
-    ll h,w,k;
-    cin>>h>>w>>k;
-    vector<ll>a(h), b(w);
-    rep(i,0,h)cin>>a[i];
-    rep(i,0,w)cin>>b[i];
-
-    ll ta = 0;
-    rep(i,0,h){
-        ta += a[i];
-        ta %= k;
-    }
-    
-    ll tb = 0;
-    rep(i,0,w){
-        tb += b[i];
-        tb %= k;
-    }
-    if (ta != tb){
-        cout << -1 << endl;
-        return 0;
-    }
-
-    vector<ll> va(k);
-    ll mx = (k-1)*w;
-    rep(i,0,k){
-        ll now = i;
-        ll l = 0;
-        ll r = 20000000;
-        while(r-l>1){
-            ll mid = (l+r)/2;
-            ll temp = now + k*mid;
-            if (temp<=mx){
-                l = mid;
-            }else{
-                r = mid;
-            }
+    string s;
+    cin>>s;
+    sort(all(s));
+    ll ans = 0;
+    do{
+        ll n = s.size();
+        rep(i,1,n){
+            string s1="";
+            string s2="";
+            rep(j,0,i) s1 += s[j];
+            rep(j,i,n) s2 += s[j];
+            if (s1[0]=='0') continue;
+            if (s2[0]=='0') continue;
+            ll x1 = stoll(s1);
+            ll x2 = stoll(s2);
+            chmax(ans, x1*x2);
         }
-        va[i] = now + k*l;
-    }
-
-    vector<ll> vb(k);
-    mx = (k-1)*h;
-    rep(i,0,k){
-        ll now = i;
-        ll l = 0;
-        ll r = 20000000;
-        while(r-l>1){
-            ll mid = (l+r)/2;
-            ll temp = now + k*mid;
-            if (temp<=mx){
-                l = mid;
-            }else{
-                r = mid;
-            }
-        }
-        vb[i] = now + k*l;
-    }
-
-    ll x = 0;
-    rep(i,0,h) x += va[a[i]];
-    ll y = 0;
-    rep(i,0,w) y += vb[b[i]];
-    ll ans = min(x,y);
+    }while(next_permutation(all(s)));
     cout << ans << endl;
-
     // cout << fixed << setprecision(18);
     return 0;
 }

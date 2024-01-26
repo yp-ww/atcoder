@@ -31,71 +31,19 @@ ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次�
 
 int main()
 {
-    ll h,w,k;
-    cin>>h>>w>>k;
-    vector<ll>a(h), b(w);
-    rep(i,0,h)cin>>a[i];
-    rep(i,0,w)cin>>b[i];
-
-    ll ta = 0;
-    rep(i,0,h){
-        ta += a[i];
-        ta %= k;
-    }
-    
-    ll tb = 0;
-    rep(i,0,w){
-        tb += b[i];
-        tb %= k;
-    }
-    if (ta != tb){
-        cout << -1 << endl;
-        return 0;
-    }
-
-    vector<ll> va(k);
-    ll mx = (k-1)*w;
-    rep(i,0,k){
-        ll now = i;
-        ll l = 0;
-        ll r = 20000000;
-        while(r-l>1){
-            ll mid = (l+r)/2;
-            ll temp = now + k*mid;
-            if (temp<=mx){
-                l = mid;
-            }else{
-                r = mid;
-            }
+    ll n;
+    cin>>n;
+    vector<ll>x(n);
+    rep(i,0,n)cin>>x[i];
+    ll ans = INF;
+    rep(i,1,101){
+        ll temp = 0;
+        rep(j,0,n){
+            temp += (x[j]-i)*(x[j]-i);
         }
-        va[i] = now + k*l;
-    }
-
-    vector<ll> vb(k);
-    mx = (k-1)*h;
-    rep(i,0,k){
-        ll now = i;
-        ll l = 0;
-        ll r = 20000000;
-        while(r-l>1){
-            ll mid = (l+r)/2;
-            ll temp = now + k*mid;
-            if (temp<=mx){
-                l = mid;
-            }else{
-                r = mid;
-            }
-        }
-        vb[i] = now + k*l;
-    }
-
-    ll x = 0;
-    rep(i,0,h) x += va[a[i]];
-    ll y = 0;
-    rep(i,0,w) y += vb[b[i]];
-    ll ans = min(x,y);
+        chmin(ans, temp);
+    }   
     cout << ans << endl;
-
     // cout << fixed << setprecision(18);
     return 0;
 }

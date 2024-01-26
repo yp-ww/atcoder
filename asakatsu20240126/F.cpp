@@ -29,73 +29,47 @@ const vector<int> DY = { 0, 1, 0, -1 };
 const long long INF = (ll)1e18+10;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
+using mint = modint1000000007;
+
 int main()
 {
-    ll h,w,k;
-    cin>>h>>w>>k;
-    vector<ll>a(h), b(w);
-    rep(i,0,h)cin>>a[i];
-    rep(i,0,w)cin>>b[i];
-
-    ll ta = 0;
-    rep(i,0,h){
-        ta += a[i];
-        ta %= k;
-    }
-    
-    ll tb = 0;
-    rep(i,0,w){
-        tb += b[i];
-        tb %= k;
-    }
-    if (ta != tb){
-        cout << -1 << endl;
+    ll n;
+    cin>>n;
+    vector<ll>a(n);
+    rep(i,0,n)cin>>a[i];
+    map<ll,ll>mp;
+    rep(i,0,n)mp[a[i]]++;
+    if (a[0]!=0 || mp[0]>1){
+        cout << 0 << endl;
         return 0;
     }
-
-    vector<ll> va(k);
-    ll mx = (k-1)*w;
-    rep(i,0,k){
-        ll now = i;
-        ll l = 0;
-        ll r = 20000000;
-        while(r-l>1){
-            ll mid = (l+r)/2;
-            ll temp = now + k*mid;
-            if (temp<=mx){
-                l = mid;
-            }else{
-                r = mid;
-            }
+    ll mx = 0;
+    rep(i,0,n)chmax(mx,a[i]);
+    vector<ll> v(n+1);
+    rep(i,0,n) v[a[i]]++;
+    rep(i,0,mx+1){
+        if (!v[i]){
+            cout << 0 << endl;
+            return 0;
         }
-        va[i] = now + k*l;
     }
 
-    vector<ll> vb(k);
-    mx = (k-1)*h;
-    rep(i,0,k){
-        ll now = i;
-        ll l = 0;
-        ll r = 20000000;
-        while(r-l>1){
-            ll mid = (l+r)/2;
-            ll temp = now + k*mid;
-            if (temp<=mx){
-                l = mid;
-            }else{
-                r = mid;
-            }
+    mint ans = 1;
+    auto itr = mp.begin();
+    itr++;
+    ll pre = 1;
+    while(itr!=mp.end()){
+        auto [d, cnt] = *itr;
+        ll m = cnt*(cnt-1)/2;
+        ans *= pow_mod(2,m,1000000007);
+        rep(i,0,cnt){
+            ans *= pow_mod(2,pre,1000000007)-1;
         }
-        vb[i] = now + k*l;
+        pre = cnt;
+        itr++;
     }
-
-    ll x = 0;
-    rep(i,0,h) x += va[a[i]];
-    ll y = 0;
-    rep(i,0,w) y += vb[b[i]];
-    ll ans = min(x,y);
-    cout << ans << endl;
-
+    cout << ans.val() << endl;
+    
     // cout << fixed << setprecision(18);
     return 0;
 }

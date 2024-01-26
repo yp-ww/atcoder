@@ -29,73 +29,42 @@ const vector<int> DY = { 0, 1, 0, -1 };
 const long long INF = (ll)1e18+10;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
+ll op(ll a, ll b) { return max(a, b); }
+ll e(){ return 0LL; }
+
 int main()
 {
-    ll h,w,k;
-    cin>>h>>w>>k;
-    vector<ll>a(h), b(w);
-    rep(i,0,h)cin>>a[i];
-    rep(i,0,w)cin>>b[i];
+    ll n,m;
+    cin>>n>>m;
+    vector<ll>a(m),b(m);
+    rep(i,0,m)cin>>a[i]>>b[i];
 
-    ll ta = 0;
-    rep(i,0,h){
-        ta += a[i];
-        ta %= k;
+    map<ll,vector<ll>> mp;
+    rep(i,0,m){
+        mp[a[i]].push_back(b[i]);
     }
     
-    ll tb = 0;
-    rep(i,0,w){
-        tb += b[i];
-        tb %= k;
-    }
-    if (ta != tb){
-        cout << -1 << endl;
-        return 0;
-    }
-
-    vector<ll> va(k);
-    ll mx = (k-1)*w;
-    rep(i,0,k){
-        ll now = i;
-        ll l = 0;
-        ll r = 20000000;
-        while(r-l>1){
-            ll mid = (l+r)/2;
-            ll temp = now + k*mid;
-            if (temp<=mx){
-                l = mid;
-            }else{
-                r = mid;
-            }
+    segtree<ll,op,e> seg(200200);
+    ll ans = 0;
+    auto itr = mp.end();
+    while(itr!=mp.begin()){
+        itr--;
+        auto [x,yarr] = *itr;
+        ll temp = 0;
+        for (auto y: yarr){
+            chmax(temp, seg.prod(y+1,200200)+1);
         }
-        va[i] = now + k*l;
-    }
-
-    vector<ll> vb(k);
-    mx = (k-1)*h;
-    rep(i,0,k){
-        ll now = i;
-        ll l = 0;
-        ll r = 20000000;
-        while(r-l>1){
-            ll mid = (l+r)/2;
-            ll temp = now + k*mid;
-            if (temp<=mx){
-                l = mid;
-            }else{
-                r = mid;
-            }
+        chmax(ans, temp);
+        vector<ll> arr;
+        for (auto y: yarr){
+            arr.push_back(seg.prod(y+1,200200)+1);
         }
-        vb[i] = now + k*l;
+        rep(i,0,arr.size()){
+            seg.set(yarr[i], arr[i]);
+        }
     }
-
-    ll x = 0;
-    rep(i,0,h) x += va[a[i]];
-    ll y = 0;
-    rep(i,0,w) y += vb[b[i]];
-    ll ans = min(x,y);
     cout << ans << endl;
-
+    
     // cout << fixed << setprecision(18);
     return 0;
 }
