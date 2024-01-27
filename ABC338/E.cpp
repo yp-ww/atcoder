@@ -29,16 +29,32 @@ const vector<int> DY = { 0, 1, 0, -1 };
 const long long INF = (ll)1e18+10;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
+ll op(ll a,ll b){return a+b; }
+ll e(){return 0LL;}
+
 int main()
 {
-    string s;
-    cin>>s;
-    vector<ll>cnt(26);
-    rep(i,0,s.size()){
-        cnt[s[i]-'a']++;
+    ll n;
+    cin>>n;
+    vector<ll> a(n),b(n);
+    rep(i,0,n)cin>>a[i]>>b[i];
+    rep(i,0,n)a[i]--;
+    rep(i,0,n)b[i]--;
+    bool flag = false;
+    vector<pair<ll,ll>> arr;
+    rep(i,0,n){
+        if (a[i]>b[i]) swap(a[i],b[i]);
+        arr.push_back({a[i],b[i]});
     }
-    auto m = max_element(all(cnt)) - cnt.begin();
-    cout << char('a'+m) << endl;
+    sort(all(arr));
+
+    segtree<ll,op,e> seg(2*n);
+    rep(i,0,n){
+        auto [x,y] = arr[i];
+        if (seg.prod(x,y)) flag = true;
+        seg.set(y,1);
+    }
+    YesNo(flag);
     
     // cout << fixed << setprecision(18);
     return 0;
