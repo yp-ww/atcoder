@@ -29,20 +29,21 @@ const vector<int> DY = { 0, 1, 0, -1 };
 const long long INF = (ll)1e18+10;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
-using P = pair<ll,ll>;
-vector<ll> dijkstra(vector<vector<P>> &graph, ll st = 0){
-    // graph: 重み付き連結リスト
+#define endl "\n" // インタラクティブの時はコメントアウトする
+
+vector<ll> f(vector<vector<ll>> &graph, ll st = 0){
     ll sz = graph.size();
     vector<ll> v(sz, INF);
-    priority_queue_rev<P> hq;
-    hq.push(make_pair(0, st));
-    while(!hq.empty()){
-        auto [d, now] = hq.top(); hq.pop();
-        if (v[now]!=INF) continue;
-        v[now] = d;
-        for (auto [nex, cost]: graph[now]){
+    queue<ll> q;
+    q.push(st);
+    v[st] = 0;
+    while(!q.empty()){
+        auto now = q.front(); q.pop();
+        for (auto nex: graph[now]){
             if (v[nex]!=INF) continue;
-            hq.push(make_pair(d+cost, nex));
+            q.push(nex);
+            v[nex] = v[now] + 1;
+            if (nex==sz-1) return v;
         }
     }
     return v;
@@ -50,20 +51,57 @@ vector<ll> dijkstra(vector<vector<P>> &graph, ll st = 0){
 
 int main()
 {
-    ll n;
-    cin>>n;
-    vector<vector<pair<ll,ll>>> g(n);
-    rep(i,0,n-1){
-        ll a,b,x;
-        cin>>a>>b>>x;
-        x--;
-        g[i].push_back({i+1,a});
-        g[i].push_back({x,b});
-    }
-    
-    auto v = dijkstra(g, 0);
-    cout << v[n-1] << endl;
-    
+    ios::sync_with_stdio(false);
+    std::cin.tie(nullptr);
     // cout << fixed << setprecision(18);
+    
+    ll n,m;
+    cin>>n>>m;
+    vector<ll>s(m),t(m);
+    rep(i,0,m)cin>>s[i]>>t[i];
+    rep(i,0,m) s[i]--;
+    rep(i,0,m) t[i]--;
+
+    vector<vector<ll>> to(n);
+    vector<vector<pair<ll,ll>>> ba(n);
+    rep(i,0,m){
+        to[s[i]].push_back(t[i]);
+        ba[t[i]].push_back({s[i],i});
+    }
+    auto v = f(to);
+    if (v[n-1]==INF){
+        rep(i,0,m) cout << -1 << endl;
+        return 0;
+    }
+
+    set<ll> st;
+    ll now = n-1;
+    ll d = v[n-1];
+    while(d){
+        for (auto [nex,idx]: ba[now]){
+            if (v[nex]==d-1){
+                now = nex;
+                d--;
+                st.insert(idx);
+                break;
+            }
+        }
+    }
+
+    rep(i,0,m){
+        if (st.find(i)==st.end()){
+            cout << v[n-1] << endl;
+            continue;
+        }
+        vector<vector<ll>> g(n);
+        rep(j,0,m){
+            if (i==j) continue;
+            g[s[j]].push_back(t[j]);
+        }
+        auto v2 = f(g);
+        if (v2[n-1]==INF) cout << -1 << endl;
+        else cout << v2[n-1] << endl;
+    }
+
     return 0;
 }
