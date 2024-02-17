@@ -31,43 +31,58 @@ ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次�
 
 #define endl "\n" // インタラクティブの時はコメントアウトする
 
-ll opmin(ll a, ll b){ return min(a, b); }
-ll emin(){ return INF; }
-ll opmax(ll a, ll b){ return max(a, b); }
-ll emax(){ return -INF; }
-
 int main()
 {
     ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     // cout << fixed << setprecision(18);
-    
-    ll n;
-    cin>>n;
-    vector<ll>p(n);
-    rep(i,0,n)cin>>p[i];
-    rep(i,0,n)p[i]--;
 
-    segtree<ll,opmin,emin> seglmin(n), segrmin(n);
-    segtree<ll,opmax,emax> seglmax(n), segrmax(n);
-    rep(i,0,n) segrmax.set(p[i], p[i]-i);
-    rep(i,0,n) segrmin.set(p[i], p[i]+i);
-    rep(i,0,n){
-        ll ans = INF;
-        // i<j
-        chmin(ans, p[i]-i-segrmax.prod(0, p[i]));
-        chmin(ans, -p[i]-i+segrmin.prod(p[i]+1,n));
-        // i>j
-        chmin(ans, p[i]+i-seglmax.prod(0,p[i]));
-        chmin(ans, i-p[i]+seglmin.prod(p[i]+1,n));
+    ll n,q;
+    cin>>n>>q;
+    vector<ll> ld(5000000, -1);
+    vector<ll> pos(5000000, -1);
+    rep(i,0,n) ld[i] = i;
+    rep(i,0,n) pos[i] = i;
+    vector<ll> ver(n);
+    rep(i,0,n) ver[i] = i;
+    vector<ll> inv(5000000,-1);
+    rep(i,0,n) inv[i] = i;
 
-        cout << ans << endl;
-
-        segrmax.set(p[i], -INF);
-        segrmin.set(p[i], INF);
-        seglmax.set(p[i], p[i]+i);
-        seglmin.set(p[i], p[i]-i);
+    dsu uf(5000000);
+    rep(i,0,n) uf.merge(i, i+2000000);
+    ll box = n;
+    ll k = n;
+    while(q--){
+        ll c;
+        cin>>c;
+        if (c==1){
+            ll x,y;
+            cin>>x>>y;
+            x--;y--;
+            uf.merge(ver[x], ver[y]);
+            ld[uf.leader(ver[y])] = ver[x];
+            ver[y] = box;
+            inv[box] = y;
+            ld[box] = box;
+            box++;
+        }else if(c==2){
+            ll x;
+            cin>>x;
+            x--;
+            uf.merge(k+2000000, ver[x]);
+            ld[uf.leader(ver[x])] = ver[x];
+            pos[k] = ver[x];
+            k++;
+        }else{
+            ll x;
+            cin>>x;
+            x--;
+            ll par = pos[x];
+            // cout << uf.leader(par) << endl;
+            ll ans = inv[ld[uf.leader(par)]];
+            cout << ans + 1 << endl;            
+        }
     }
-       
+    
     return 0;
 }

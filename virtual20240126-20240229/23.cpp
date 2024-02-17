@@ -31,43 +31,72 @@ ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次�
 
 #define endl "\n" // インタラクティブの時はコメントアウトする
 
-ll opmin(ll a, ll b){ return min(a, b); }
-ll emin(){ return INF; }
-ll opmax(ll a, ll b){ return max(a, b); }
-ll emax(){ return -INF; }
-
 int main()
 {
     ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     // cout << fixed << setprecision(18);
-    
-    ll n;
-    cin>>n;
-    vector<ll>p(n);
-    rep(i,0,n)cin>>p[i];
-    rep(i,0,n)p[i]--;
 
-    segtree<ll,opmin,emin> seglmin(n), segrmin(n);
-    segtree<ll,opmax,emax> seglmax(n), segrmax(n);
-    rep(i,0,n) segrmax.set(p[i], p[i]-i);
-    rep(i,0,n) segrmin.set(p[i], p[i]+i);
+    ll n,m;
+    cin>>n>>m;
+    vector<bool> mitei(n);
+    vector<ll> sd(n), gd(n);
+    vector<vector<ll>> g(n);
+    rep(i,0,m){
+        ll u,v;
+        cin>>u>>v;
+        u--;v--;
+        if (u==-1){
+            mitei[v] = true;
+        }else{
+            g[u].push_back(v);
+            g[v].push_back(u);
+        }
+    }
+    
+    queue<ll> q;
+    q.push(0);
+    vector<ll> v0(n,INF);
+    v0[0] = 0;
+    while(!q.empty()){
+        ll now = q.front(); q.pop();
+        for (auto nex: g[now]){
+            if (v0[nex]!=INF) continue;
+            q.push(nex);
+            v0[nex] = v0[now] + 1;
+        }
+    }
+
+    q.push(n-1);
+    vector<ll> vn(n,INF);
+    vn[n-1] = 0;
+    while(!q.empty()){
+        ll now = q.front(); q.pop();
+        for (auto nex: g[now]){
+            if (vn[nex]!=INF) continue;
+            q.push(nex);
+            vn[nex] = vn[now] + 1;
+        }
+    }
+
+    ll w0 = INF;
+    ll wn = INF;
+    rep(i,0,n){
+        if (mitei[i]){
+            chmin(w0, v0[i]);
+            chmin(wn, vn[i]);
+        }
+    }
+
     rep(i,0,n){
         ll ans = INF;
-        // i<j
-        chmin(ans, p[i]-i-segrmax.prod(0, p[i]));
-        chmin(ans, -p[i]-i+segrmin.prod(p[i]+1,n));
-        // i>j
-        chmin(ans, p[i]+i-seglmax.prod(0,p[i]));
-        chmin(ans, i-p[i]+seglmin.prod(p[i]+1,n));
-
-        cout << ans << endl;
-
-        segrmax.set(p[i], -INF);
-        segrmin.set(p[i], INF);
-        seglmax.set(p[i], p[i]+i);
-        seglmin.set(p[i], p[i]-i);
+        chmin(ans, v0[n-1]);
+        chmin(ans, w0 + wn + 2);
+        chmin(ans, v0[i] + wn + 1);
+        chmin(ans, w0 + vn[i] + 1);
+        if (ans==INF) cout << -1 << endl;
+        else cout << ans << endl;
     }
-       
+    
     return 0;
 }

@@ -31,43 +31,61 @@ ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次�
 
 #define endl "\n" // インタラクティブの時はコメントアウトする
 
-ll opmin(ll a, ll b){ return min(a, b); }
-ll emin(){ return INF; }
-ll opmax(ll a, ll b){ return max(a, b); }
-ll emax(){ return -INF; }
-
 int main()
 {
     ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     // cout << fixed << setprecision(18);
+
+    ll n,q;
+    cin>>n>>q;
+   
+    dsu uf(5000000);
+    vector<ll> par(5000000, -1);
+    rep(i,0,n) par[i] = i; // 代表元 i の入っている箱
     
-    ll n;
-    cin>>n;
-    vector<ll>p(n);
-    rep(i,0,n)cin>>p[i];
-    rep(i,0,n)p[i]--;
+    vector<ll> inv(5000000,-1);
+    rep(i,0,n) inv[i] = i; // 箱 i に入っている代表元
 
-    segtree<ll,opmin,emin> seglmin(n), segrmin(n);
-    segtree<ll,opmax,emax> seglmax(n), segrmax(n);
-    rep(i,0,n) segrmax.set(p[i], p[i]-i);
-    rep(i,0,n) segrmin.set(p[i], p[i]+i);
-    rep(i,0,n){
-        ll ans = INF;
-        // i<j
-        chmin(ans, p[i]-i-segrmax.prod(0, p[i]));
-        chmin(ans, -p[i]-i+segrmin.prod(p[i]+1,n));
-        // i>j
-        chmin(ans, p[i]+i-seglmax.prod(0,p[i]));
-        chmin(ans, i-p[i]+seglmin.prod(p[i]+1,n));
-
-        cout << ans << endl;
-
-        segrmax.set(p[i], -INF);
-        segrmin.set(p[i], INF);
-        seglmax.set(p[i], p[i]+i);
-        seglmin.set(p[i], p[i]-i);
+    ll k = n;
+    while(q--){
+        ll c;
+        cin>>c;
+        if (c==1){
+            ll x,y;
+            cin>>x>>y;
+            x--;y--;
+            if (inv[y]==-1) continue;
+            if (inv[x]==-1){
+                par[uf.leader(inv[y])] = x;
+                inv[x] = uf.leader(inv[y]);
+                inv[y] = -1;
+            }else{
+                uf.merge(inv[x], inv[y]);
+                par[uf.leader(inv[x])] = x;
+                inv[x] = uf.leader(inv[x]);
+                inv[y] = -1;
+            }
+        }else if(c==2){
+            ll x;
+            cin>>x;
+            x--;
+            if (inv[x]==-1){
+                par[uf.leader(k)] = x;
+                inv[x] = uf.leader(k);
+            }else{
+                uf.merge(inv[x], k);
+                par[uf.leader(inv[x])] = x;
+                inv[x] = uf.leader(inv[x]);
+            }
+            k++;
+        }else{
+            ll x;
+            cin>>x;
+            x--;
+            cout << par[uf.leader(x)] + 1 << endl;
+        }
     }
-       
+    
     return 0;
 }
