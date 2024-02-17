@@ -26,48 +26,54 @@ inline int clz(ll n) { return n != 0 ? (63 - __builtin_clzll(n)) : -1; }
 const double PI = 3.141592653589793;
 const vector<int> DX = { 1, 0, -1, 0 };
 const vector<int> DY = { 0, 1, 0, -1 };
-const double INF = 1e18+10;
+const long long INF = (ll)1e18+10;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
 #define endl "\n" // インタラクティブの時はコメントアウトする
 
-double op(double a, double b) { return min(a, b); }
-double e(){ return INF; }
+ll op(ll a, ll b){ return a+b; }
+ll e(){ return 0LL; }
 
 int main()
 {
     ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
-    cout << fixed << setprecision(18);
-    
-    ll n,k;
-    cin>>n>>k;
-    ll sx, sy;
-    cin>>sx>>sy;
-    vector<ll> x(n+1), y(n+1);
-    rep(i,1,n+1) cin>>x[i]>>y[i];
-    x[0] = sx;
-    y[0] = sy;
-    vector<double> dp(n+1,INF);
-    dp[0] = 0.0;
-    segtree<double,op,e> seg(dp);
+    // cout << fixed << setprecision(18);
 
-    auto f = [&](ll a,ll b){
-        ll res = (x[a]-x[b])*(x[a]-x[b]) + (y[a]-y[b])*(y[a]-y[b]);
-        return (double)sqrt(res);
-    };
+    ll n;
+    cin>>n;
+    vector<ll>a(n),b(n);
+    rep(i,0,n)cin>>a[i];
+    rep(i,0,n)cin>>b[i];
 
-    double tot = 0.0;
-    rep(i,1,n+1){
-        tot += f(i-1,i);
-        ll l = max(i-k, 0LL);
-        double _min = seg.prod(l, i);
-        if (i+1<=n) dp[i] = _min - f(i,i+1) + f(0,i) + f(0,i+1);
-        else dp[i] = _min + f(0,i);
-        seg.set(i, dp[i]);
+    vector<ll> cnta(n+1), cntb(n+1);
+    rep(i,0,n)cnta[a[i]]++;
+    rep(i,0,n)cntb[b[i]]++;
+    if (cnta!=cntb){
+        YesNo(false);
+        return 0;
     }
-    cout << tot + dp[n] << endl;    
-    
+
+    bool flag = false;
+    rep(i,1,n+1) if(cnta[i]>=2) flag = true;
+    if (flag){
+        YesNo(true);
+        return 0;
+    }
+
+    segtree<ll,op,e> sega(n+1), segb(n+1);
+    ll sa = 0;
+    rep(i,0,n){
+        sa += sega.prod(a[i]+1,n+1);
+        sega.set(a[i], sega.get(a[i])+1);
+    }
+    ll sb = 0;
+    rep(i,0,n){
+        sb += segb.prod(b[i]+1,n+1);
+        segb.set(b[i], segb.get(b[i])+1);
+    }
+
+    YesNo(sa%2==sb%2);
 
     return 0;
 }

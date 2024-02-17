@@ -31,9 +31,6 @@ ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次�
 
 #define endl "\n" // インタラクティブの時はコメントアウトする
 
-ll op(ll a, ll b){ return a+b; }
-ll e(){ return 0LL; }
-
 int main()
 {
     ios::sync_with_stdio(false);
@@ -42,38 +39,90 @@ int main()
 
     ll n;
     cin>>n;
-    vector<ll>a(n),b(n);
-    rep(i,0,n)cin>>a[i];
-    rep(i,0,n)cin>>b[i];
+    vector<string> s(n);
+    rep(i,0,n)cin>>s[i];
 
-    vector<ll> cnta(n+1), cntb(n+1);
-    rep(i,0,n)cnta[a[i]]++;
-    rep(i,0,n)cntb[b[i]]++;
-    if (cnta!=cntb){
-        YesNo(false);
-        return 0;
-    }
+    auto cmp = [&](ll a, ll b){
+        vector<ll> cnt(10);
+        rep(i,0,s[a].size()){
+            if (s[a][i]=='X') continue;
+            cnt[s[a][i]-'0']++;
+        }
+        rep(i,0,s[b].size()){
+            if (s[b][i]=='X') continue;
+            cnt[s[b][i]-'0']++;
+        }
 
-    bool flag = false;
-    rep(i,1,n+1) if(cnta[i]>=2) flag = true;
-    if (flag){
-        YesNo(true);
-        return 0;
-    }
+        vector<ll> cnt1 = cnt;
+        ll vl = 0;
+        rep(i,0,s[a].size()){
+            if (s[a][i]=='X'){
+                rep(j,1,10){
+                    vl += cnt1[j] * j;
+                }
+            }else{
+                cnt1[s[a][i]-'0']--;
+            }
+        }
+        rep(i,0,s[b].size()){
+            if (s[b][i]=='X'){
+                rep(j,1,10){
+                    vl += cnt1[j] * j;
+                }
+            }else{
+                cnt1[s[b][i]-'0']--;
+            }
+        }
 
-    segtree<ll,op,e> sega(n+1), segb(n+1);
-    ll sa = 0;
+        vector<ll> cnt2 = cnt;
+        ll vr = 0;
+        rep(i,0,s[b].size()){
+            if (s[b][i]=='X'){
+                rep(j,1,10){
+                    vr += cnt2[j] * j;
+                }
+            }else{
+                cnt2[s[b][i]-'0']--;
+            }
+        }
+        rep(i,0,s[a].size()){
+            if (s[a][i]=='X'){
+                rep(j,1,10){
+                    vr += cnt2[j] * j;
+                }
+            }else{
+                cnt2[s[a][i]-'0']--;
+            }
+        }
+
+        return vl > vr;
+    };
+
+    vector<ll> idx(n);
+    rep(i,0,n) idx[i] = i;
+    stable_sort(all(idx), cmp);
+
+    vector<ll> cnt(10);
     rep(i,0,n){
-        sa += sega.prod(a[i]+1,n+1);
-        sega.set(a[i], sega.get(a[i])+1);
-    }
-    ll sb = 0;
-    rep(i,0,n){
-        sb += segb.prod(b[i]+1,n+1);
-        segb.set(b[i], segb.get(b[i])+1);
+        rep(j,0,s[i].size()){
+            if (s[i][j]=='X') continue;
+            cnt[s[i][j]-'0']++;
+        }
     }
 
-    YesNo(sa%2==sb%2);
-
+    ll ans = 0;
+    for (auto i: idx){
+        rep(j,0,s[i].size()){
+            if (s[i][j]=='X'){
+                rep(k,1,10){
+                    ans += cnt[k] * k;
+                }
+            }else{
+                cnt[s[i][j]-'0']--;
+            }
+        }
+    }
+    cout << ans << endl;
+    
     return 0;
 }
