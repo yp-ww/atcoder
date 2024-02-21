@@ -26,13 +26,10 @@ inline int clz(ll n) { return n != 0 ? (63 - __builtin_clzll(n)) : -1; }
 const double PI = 3.141592653589793;
 const vector<int> DX = { 1, 0, -1, 0 };
 const vector<int> DY = { 0, 1, 0, -1 };
-const long long INF = 4004004003104004004LL; // (int)INFL = 1010931620;
+const long long INF = 4004004003104004004LL; // (int)INF = 1010931620;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
 #define endl "\n" // インタラクティブの時はコメントアウトする
-
-using mint = modint;
-mint dp[3030][3030][2];
 
 int main()
 {
@@ -40,29 +37,67 @@ int main()
     std::cin.tie(nullptr);
     // cout << fixed << setprecision(18);
 
-    ll n,p;
-    cin>>n>>p;
-    mint::set_mod(p);
-
-    dp[0][1][0] = 1;
-    dp[0][0][1] = 1;    
-    rep(i,0,n){
-        rep(j,0,n+1){
-            // delete 2
-            dp[i+1][j+2][0] += dp[i][j][1]*2;
-
-            // delete 1
-            dp[i+1][j+1][0] += dp[i][j][0];
-            dp[i+1][j+1][1] += dp[i][j][1]*3;
-
-            // None
-            dp[i+1][j][1] += dp[i][j][0] + dp[i][j][1];
-        }
+    ll n,m;
+    cin>>n>>m;
+    vector<ll>x(n),y(n);
+    rep(i,0,n)cin>>x[i];
+    rep(i,0,n)cin>>y[i];
+    vector<ll>a(m),b(m),z(m);
+    rep(i,0,m){
+        cin>>a[i]>>b[i]>>z[i];
+        a[i]--;b[i]--;
     }
+    vector<tuple<ll,ll,ll,ll>> tp;
+    rep(i,0,n) tp.push_back({x[i],0,i,n});
+    rep(i,0,n) tp.push_back({y[i],1,i,n+1});
+    rep(i,0,m) tp.push_back({z[i],2,a[i],b[i]});
 
-    rep(i,1,n){
-        cout << dp[n-1][i][1].val() << endl;
+    sort(all(tp));
+    // only road
+    dsu uf(n+2);
+    ll tot = 0;
+    for (auto [cost,type,u,v]: tp){
+        if (type!=2) continue;
+        if (uf.same(u,v)) continue;
+        tot += cost;
+        uf.merge(u,v);
     }
+    ll ans = INF;
+    if (uf.groups().size()==3) chmin(ans, tot);
+    
+    // air + road
+    dsu uf1(n+2);
+    tot = 0;
+    for (auto [cost,type,u,v]: tp){
+        if (type==1) continue;
+        if (uf1.same(u,v)) continue;
+        tot += cost;
+        uf1.merge(u,v);
+    }
+    chmin(ans, tot);
+
+    // port + road
+    dsu uf2(n+2);
+    tot = 0;
+    for (auto [cost,type,u,v]: tp){
+        if (type==0) continue;
+        if (uf2.same(u,v)) continue;
+        tot += cost;
+        uf2.merge(u,v);
+    }
+    chmin(ans, tot);
+
+    // all
+    dsu uf3(n+2);
+    tot = 0;
+    for (auto [cost,type,u,v]: tp){
+        if (uf3.same(u,v)) continue;
+        tot += cost;
+        uf3.merge(u,v);
+    }
+    chmin(ans, tot);
+
+    cout << ans << endl;
 
     
     return 0;
