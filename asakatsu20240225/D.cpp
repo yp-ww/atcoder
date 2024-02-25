@@ -37,6 +37,16 @@ int main()
     std::cin.tie(nullptr);
     // cout << fixed << setprecision(18);
     
-    
+    ll n,m,k;
+    cin>>n>>m>>k;
+    bool flag = false;
+    rep(i,0,m+1){
+        rep(j,0,n+1){
+            ll cnt = n*i + m*j - 2*i*j;
+            if (cnt==k) flag = true;
+            cout << cnt << endl;
+        }
+    }   
+    YesNo(flag);
     return 0;
 }

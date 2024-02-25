@@ -37,6 +37,20 @@ int main()
     std::cin.tie(nullptr);
     // cout << fixed << setprecision(18);
     
-    
+    ll a,b,c,d;
+    cin>>a>>b>>c>>d;
+    if (b<=c || d<=a){
+        cout << 0 << endl;
+        return 0;
+    }
+    if (a<=c && c<=b){
+        cout << min(b,d) - c << endl;
+        return 0;
+    }
+    if (c<=a && a<=d){
+        cout << min(d,b) - a << endl;
+        return 0;
+    }
+
     return 0;
 }

@@ -36,7 +36,37 @@ int main()
     ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     // cout << fixed << setprecision(18);
-    
-    
+
+    ll n,m;
+    cin>>n>>m;
+
+    vector<vector<tuple<ll,ll,ll,ll,ll>>> g(n);
+    rep(i,0,m){
+        ll l,d,k,c,a,b;
+        cin>>l>>d>>k>>c>>a>>b;
+        a--;b--;
+        g[b].push_back({a,l,d,k,c});
+    }
+    vector<ll> time(n,-1);
+  
+    priority_queue<pair<ll,ll>> hq;
+    hq.push({INF, n-1});
+    while(!hq.empty()){
+        auto [t,now] = hq.top(); hq.pop();
+        if (time[now]!=-1) continue;
+        time[now] = t;
+        for (auto [pre, l, d, k, c]: g[now]){
+            if (time[pre]!=-1) continue;
+            if (t-c<l) continue;
+            ll rem = t - c - l;
+            ll cnt = min(k-1, rem/d);
+            ll last = l + cnt * d;
+            hq.push({last, pre});
+        }
+    }
+    rep(i,0,n-1){
+        if (time[i]==-1) cout << "Unreachable" << endl;
+        else cout << time[i] << endl;
+    }
     return 0;
 }

@@ -11,7 +11,7 @@ template <class T> using priority_queue_rev = priority_queue<T, vector<T>, great
 #define rrep(i, a, b) for(ll i=a; i>=b; i--)
 #define all(a) (a).begin(), (a).end()
 #define smod(n, m) ((((n) % (m)) + (m)) % (m)) // 非負mod
-#define YesNo(bool) if(bool){cout<<"Yes"<<endl;}else{cout<<"No"<<endl;}
+#define YesNo(bool) if(bool){cout<<"YES"<<endl;}else{cout<<"NO"<<endl;}
 
 template<typename T> inline bool chmax(T &a, T b) { return ((a < b) ? (a = b, true) : (false)); }
 template<typename T> inline bool chmin(T &a, T b) { return ((a > b) ? (a = b, true) : (false)); }
@@ -31,12 +31,28 @@ ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次�
 
 #define endl "\n" // インタラクティブの時はコメントアウトする
 
+vector<bool> eratosthenes(int N){
+    vector<bool> isprime(N+1, true);
+    isprime[0] = isprime[1] = false;
+    rep(p, 2, N+1){
+        if (!isprime[p]) continue;
+        int q = p + p;
+        while (q < N+1){isprime[q] = false; q += p;}
+    }
+    return isprime;
+}
+
 int main()
 {
     ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     // cout << fixed << setprecision(18);
-    
+
+    ll n;
+    cin>>n;
+
+    auto arr = eratosthenes(10000000);
+    YesNo(arr[n]);
     
     return 0;
 }

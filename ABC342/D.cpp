@@ -31,12 +31,53 @@ ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次�
 
 #define endl "\n" // インタラクティブの時はコメントアウトする
 
+map<long long, int> primeFactorization(long long n){
+    map<long long, int> res;
+    for (long long i=2; i*i<=n; i++){
+        while (n % i == 0){ res[i]++; n /= i;}
+    }
+    if(n != 1) res[n] = 1;
+    return res;
+}
+
 int main()
 {
     ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     // cout << fixed << setprecision(18);
-    
-    
+
+    ll n;
+    cin>>n;
+    vector<ll>a(n);
+    rep(i,0,n)cin>>a[i];
+
+    vector<ll> arr(300000);
+    vector<ll> b(n);
+    rep(i,0,n){
+        if (a[i]==0){
+            arr[0]++;
+            b[i] = 0;
+        }else{
+            auto vec = primeFactorization(a[i]);
+            ll res = 1;
+            for (auto [x, cnt]: vec){
+                if (cnt%2) res *= x;
+            }
+            arr[res]++;
+            b[i] = res;
+        }
+    }
+    ll ans = 0;
+    rep(i,0,n){
+        arr[b[i]]--;
+        if (a[i]==0){
+            ans += n-i-1;
+        }else{
+            ans += arr[b[i]];
+            ans += arr[0];
+        }
+    }
+    cout << ans << endl;
+
     return 0;
 }

@@ -11,7 +11,7 @@ template <class T> using priority_queue_rev = priority_queue<T, vector<T>, great
 #define rrep(i, a, b) for(ll i=a; i>=b; i--)
 #define all(a) (a).begin(), (a).end()
 #define smod(n, m) ((((n) % (m)) + (m)) % (m)) // 非負mod
-#define YesNo(bool) if(bool){cout<<"Yes"<<endl;}else{cout<<"No"<<endl;}
+#define YesNo(bool) if(bool){cout<<"YES"<<endl;}else{cout<<"NO"<<endl;}
 
 template<typename T> inline bool chmax(T &a, T b) { return ((a < b) ? (a = b, true) : (false)); }
 template<typename T> inline bool chmin(T &a, T b) { return ((a > b) ? (a = b, true) : (false)); }
@@ -36,7 +36,24 @@ int main()
     ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     // cout << fixed << setprecision(18);
-    
+
+    ll sx, sy, gx, gy, t, v;
+    cin >>sx >> sy >> gx >> gy >> t >> v;
+    ll n;
+    cin>>n;
+    auto f = [&](ll x1, ll y1, ll x2, ll y2){
+        ll res = (x1-x2)*(x1-x2) + (y1-y2)*(y1-y2);
+        return sqrt(res);
+    };
+    bool flag = false;
+    while(n--){
+        ll x,y;
+        cin>>x>>y;
+        double d1 = f(sx,sy,x,y);
+        double d2 = f(gx,gy,x,y);
+        if (d1+d2<=(double)t*v) flag = true;
+    }
+    YesNo(flag);
     
     return 0;
 }

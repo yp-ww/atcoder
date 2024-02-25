@@ -37,6 +37,30 @@ int main()
     std::cin.tie(nullptr);
     // cout << fixed << setprecision(18);
     
-    
+    ll n;
+    cin>>n;
+    vector<ll>a(n);
+    rep(i,0,n)cin>>a[i];
+
+    vector<ll> dp(400000, INF);
+
+    dp[0] = a[0];
+    dp[1] = a[0];
+    rep(i,1,n){
+        chmin(dp[i], dp[i-1]+a[i]);
+        chmin(dp[i+1], dp[i-1]+a[i]);
+    }
+
+    vector<ll> dp2(400000, INF);
+    dp2[0] = a[n-1];
+    dp2[n-1] = a[n-1];
+    rep(i,0,n-1){
+        chmin(dp2[i], dp2[smod(i-1,n)]+a[i]);
+        chmin(dp2[i+1], dp2[smod(i-1,n)]+a[i]);
+    }
+
+    cout << min(dp[n-1], dp2[n-2]);
+
+
     return 0;
 }
