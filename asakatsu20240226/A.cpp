@@ -26,60 +26,30 @@ inline int clz(ll n) { return n != 0 ? (63 - __builtin_clzll(n)) : -1; }
 const double PI = 3.141592653589793;
 const vector<int> DX = { 1, 0, -1, 0 };
 const vector<int> DY = { 0, 1, 0, -1 };
-const long long INF = (ll)1e18+10;
+const long long INF = 4004004003104004004LL; // (int)INF = 1010931620;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
-// #define endl "\n" // インタラクティブの時はコメントアウトする
-
-ll dp[2000][2][2];
+#define endl "\n" // インタラクティブの時はコメントアウトする
 
 int main()
 {
     ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     // cout << fixed << setprecision(18);
-    
+
     ll n;
     cin>>n;
-    vector<ll>p(n),q(n),qpos(n);
-    rep(i,0,n)cin>>p[i];
-    rep(i,0,n)cin>>q[i];
-    rep(i,0,n)p[i]--;
-    rep(i,0,n)q[i]--;
-
-    rep(i,0,n) qpos[q[i]] = i;
-
-    vector<int> left(n,-1),right(n,-1);
-    // p: [l, r], q: [L, R]
-    function<bool(ll,ll,ll,ll)> dfs = [&](ll l, ll r, ll L, ll R){
-        ll now = p[l];
-        ll pos = qpos[now];
-        if (pos < L || R < pos) return false;
-        // L <= pos <= R
-        if (L != pos){
-            left[now] = p[l+1];
-            if (!dfs(l+1, l+pos-L, L, pos-1)) return false;
+    rep(i,0,5){
+        if ((n+i)%5==0){
+            cout << n+i << endl;
+            return 0;
         }
-        if (pos != R){
-            right[now] = p[l+pos-L+1];
-            if (!dfs(l+pos-L+1, r, pos+1, R)) return false;
+        if ((n-i)%5==0){
+            cout << n-i << endl;
+            return 0;
         }
-        return true;
-    };
-
-    if (p[0] != 0){
-        cout << -1 << endl;
-        return 0;
     }
 
-    if (!dfs(0,n-1,0,n-1)){
-        cout << -1 << endl;
-        return 0;
-    }
-
-    rep(i,0,n){
-        cout << left[i]+1 << " " << right[i]+1 << endl;
-    }
-
+    
     return 0;
 }

@@ -29,7 +29,12 @@ const vector<int> DY = { 0, 1, 0, -1 };
 const long long INF = 4004004003104004004LL; // (int)INF = 1010931620;
 ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次元座標に変換
 
-#define endl "\n" // インタラクティブの時はコメントアウトする
+// #define endl "\n" // インタラクティブの時はコメントアウトする
+
+ll opmax(ll a, ll b){ return max(a, b); }
+ll emax(){ return 0LL; }
+ll opmin(ll a, ll b){ return min(a, b); }
+ll emin(){ return INF; }
 
 int main()
 {
@@ -37,6 +42,43 @@ int main()
     std::cin.tie(nullptr);
     // cout << fixed << setprecision(18);
     
+    ll n;
+    cin>>n;
+    vector<pair<ll,ll>> arr;
+    rep(i,0,n){
+        ll x,y;
+        cin>>x>>y;
+        arr.emplace_back(x,y);
+    }
+    sort(all(arr));
+    vector<ll> x(n), y(n);
+    rep(i,0,n) x[i] = arr[i].first;
+    rep(i,0,n) y[i] = arr[i].second;
+    segtree<ll,opmax,emax> segmax(y);
+    segtree<ll,opmin,emin> segmin(y);
+
+    auto f = [&](ll z){
+        bool flag = false;
+        ll right = 0;
+        rep(i,0,n){
+            while(right<n && x[right]-x[i]<z){
+                right++;
+            }
+            if (right==n) continue;
+            if (abs(segmax.prod(right, n)-y[i])>=z) flag = true;
+            if (abs(segmin.prod(right, n)-y[i])>=z) flag = true;
+        }
+        return flag;
+    };
+
+    ll l = 0;
+    ll r = INF;
+    while(r-l>1){
+        ll mid = (l+r)/2;
+        if (f(mid)) l = mid;
+        else r = mid;
+    }
     
+    cout << l << endl;
     return 0;
 }
