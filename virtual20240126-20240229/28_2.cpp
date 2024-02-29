@@ -42,11 +42,11 @@ int main()
     vector<vector<ll>>a(h,vector<ll>(w));
     rep(i,0,h)rep(j,0,w)cin>>a[i][j];
 
-    vector<vector<vector<ll>>> dp(h, vector<vector<ll>>(2, vector<ll>(2, INF)));
+    vector<vector<vector<ll>>> dp(h+1, vector<vector<ll>>(2, vector<ll>(2, INF)));
     dp[0][0][0] = 0;
     dp[0][0][1] = 1;
 
-    rep(i,1,h){
+    rep(i,1,h+1){
         rep(j,0,2){
             rep(k,0,2){
                 rep(l,0,2){
@@ -66,17 +66,6 @@ int main()
                         flag &= temp;
                     }
                     if (!flag) continue;
-                    if (i==h-1){
-                        bool last = true;
-                        rep(x,0,w){
-                            bool temp = false;
-                            if (arr[2][x] == arr[1][x]) temp = true;
-                            if (x+1<w && arr[2][x] == arr[2][x+1]) temp = true;
-                            if (x-1>=0 && arr[2][x] == arr[2][x-1]) temp = true;
-                            last &= temp;
-                        }
-                        if (!last) continue;
-                    }
                     chmin(dp[i][j][k], dp[i-1][l][j] + k);
                 }
             }
@@ -84,10 +73,10 @@ int main()
     }
 
     ll ans = INF;
-    chmin(ans, dp[h-1][0][0]);
-    chmin(ans, dp[h-1][0][1]);
-    chmin(ans, dp[h-1][1][1]);
-    chmin(ans, dp[h-1][1][1]);
+    chmin(ans, dp[h][0][0]);
+    chmin(ans, dp[h][0][1]);
+    chmin(ans, dp[h][1][0]);
+    chmin(ans, dp[h][1][1]);
     if (ans>=INF){
         cout << -1 << endl;
     }else{
