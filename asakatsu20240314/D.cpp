@@ -31,45 +31,40 @@ ll coordinate(ll h, ll w, ll W){ return h*W + w; } // 二次元座標を一次�
 
 #define endl "\n" // インタラクティブの時はコメントアウトする
 
-/*
-    桁の数を b 進数で取得
-    n を b 進数で表記したときの各桁の数字を上位桁から順に並べたリストを返す
-*/
-vector<int> integer_digits(long long n, int b = 10){
-    assert(abs(b) >= 2);
-    // n = 0
-    if (n == 0) return vector<int>{0};
-
-    // mod |b| をとって最下位桁から順に決定
-    vector<int> res;
-    while (n != 0) {
-        int d = smod(n, abs(b));
-        res.push_back(d);
-        n = (n - d) / b;
-    }
-
-    // 上位桁から順になるように並べ直す
-    reverse(all(res));
-    return res;
-}
-
 int main()
 {
     ios::sync_with_stdio(false);
     std::cin.tie(nullptr);
     // cout << fixed << setprecision(18);
 
-    ll t;
-    cin>>t;
-    while(t--){
-        ll k;
-        cin>>k;
-        ll keta = 1;
-        while((ll)pow(9LL,keta)<k){
-            keta++;
+    ll n,m,q;
+    cin>>n>>m>>q;
+    vector<ll> a(q),b(q),c(q),d(q);
+    rep(i,0,q)cin>>a[i]>>b[i]>>c[i]>>d[i];
+    rep(i,0,q)a[i]--;
+    rep(i,0,q)b[i]--;
+    queue<vector<ll>> que;
+    rep(i,1,m+1) que.push({i});
+    ll ans = 0;
+    while(!que.empty()){
+        auto vec = que.front(); que.pop();
+        if (vec.size()==n){
+            ll temp = 0;
+            rep(i,0,q){
+                if (vec[b[i]]-vec[a[i]]==c[i]) temp += d[i];
+            }
+            chmax(ans, temp);
+            continue;
         }
-        
-    }   
-    
+        ll lt = vec.back();
+        rep(nex, lt, m+1){
+            vec.push_back(nex);
+            que.push(vec);
+            vec.pop_back();
+        }
+    }
+    cout << ans << endl;
+
+
     return 0;
 }
